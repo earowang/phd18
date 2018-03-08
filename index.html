@@ -21,13 +21,144 @@ class: center, middle, inverse, title-slide
 
 
 
+
+
+
+class: middle
+
 ## Agenda
+
+* **WIP**: Tidy data structures to support exploration and modeling of temporal-context data
+* **Done**: Calendar-based graphics for visualising people’s daily schedules
+* **ToDo**: Visualisation of time series with nested and crossed factors
+
+---
+
+background-image: url(figure/map-airlines-1.svg)
+background-size: cover
+
+class: bottom center
+
+# USA airline traffic in 2016 &amp; 2017
+
+
+
+---
+
+background-image: url(img/data-snapshot.png)
+background-size: cover
+
+class: inverse bottom center
+
+# Data snapshot
+
+---
+
+.pull-left[
+* heterogeneous data types
+* multiple measured variables
+]
+.pull-right[
+* low time resolution
+* multi-levels of grouping
+]
+.center[&lt;img src="img/data-snapshot.png" height=440px&gt;]
+
+---
+
+## The bottleneck
+
+matrix structure
 
 ---
 
 class: inverse middle center
 
-# The data
+.scale-up[&lt;img src="img/tsibble.svg" height=200px size=50%&gt;]
+
+## Chinglish for time series tibble
+
+---
+
+class: inverse middle center
+
+&lt;img src="img/tsibble.svg" height=200px size=50%&gt;
+
+## ~~Chinglish for time series tibble~~
+## The future of time series in R
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+]
+.right-column[
+.large[Tidy data principles:]
+* Each variable forms a column.
+* Each observation forms a row.
+* Each type of observational unit forms a table.
+
+Make a table
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+]
+.right-column[
+.large[Tidy temporal data:]
+* **index**: an explicitly declared variable containing time indices.
+* **key**: uniquely identifies each unit that measurements take place on over time.
+* **interval**: a common time interval if data with regular time interval.
+
+Make a table
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+]
+.right-column[
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+]
+.right-column[
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+### - verb+noun
+]
+.right-column[
+]
+
+---
+
+
+
+## 
+
+---
+
+.box[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
 
 ---
 

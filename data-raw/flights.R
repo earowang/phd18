@@ -75,7 +75,7 @@ get_all <- function(path) {
     ) %>% 
     select(-year, -month, -day, -flight_num, -hour, -minute) %>% 
     select(flight, sched_dep_datetime, everything()) %>% 
-    filter(!is.na(dep_delay))
+    filter(!is.na(dep_delay), !(origin_state %in% c("PR", "TT", "VI")))
 }
 
 ## only look at the operating flights
