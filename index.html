@@ -7,6 +7,7 @@
     <link href="index_files/remark-css/default.css" rel="stylesheet" />
     <link href="index_files/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="myremark.css" type="text/css" />
+    <link rel="stylesheet" href="timeline.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -39,9 +40,11 @@ background-size: cover
 
 class: bottom center
 
+
+
 # USA airline traffic in 2016 &amp; 2017
 
-
+*data source: [Bureau of Transportation Statistics](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236)*
 
 ---
 
@@ -59,16 +62,47 @@ class: inverse bottom center
 * multiple measured variables
 ]
 .pull-right[
-* low time resolution
-* multi-levels of grouping
+* fine time scale
+* multiple grouping variables
 ]
 .center[&lt;img src="img/data-snapshot.png" height=440px&gt;]
 
 ---
 
-## The bottleneck
+## However ...
 
-matrix structure
+The current structure that underlies the time series objects:
+
+`\begin{equation}
+  \begin{bmatrix}
+  X_{11} &amp; X_{21} &amp; \cdots &amp; X_{p1} \\
+  X_{12} &amp; X_{22} &amp; \cdots &amp; X_{p2} \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+  X_{1T} &amp; X_{2T} &amp; \cdots &amp; X_{pT}
+  \end{bmatrix}
+\end{equation}`
+
+where `\(X_{jt}\)` represents series `\(j\)`, for `\(j = 1, \dots, p\)` and `\(1 \leq t \leq T\)`, in the form of a `\(T \times p\)` matrix.
+
+--
+
+It requires
+
+* homogeneity (numerical variables)
+* implicitly inferred time indices
+
+--
+
+This matrix format is **model-centric**.
+
+---
+
+## Force the fitting of a square peg into a round hole.
+
+* heterogeneous data types
+* explicitly declared index variable
+* syntax to describe nested or crossed factors
+* pipeline analysis
 
 ---
 
@@ -158,7 +192,186 @@ Make a table
 
 ---
 
-.box[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
+.flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
+.flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
+
+---
+
+.left-column[
+## Timeline
+### - Done
+]
+.right-column[
+.timeline.timeline-left.timeline-with-arrows[
+.timeline-block[
+.arrow-right[
+.timeline-content[
+[**Tidy data and statistical visualisation to support exploration of temporal data with R**](http://slides.earo.me/medascin17/) &lt;br&gt;
+Workshop @ Data Science Week, Melbourne
+.timeline-date[
+2017/05
+]]]]
+.timeline-block[
+.arrow-right[
+.timeline-content[
+[**Sketch people’s daily schedules**](http://slides.earo.me/wombat17/) &lt;br&gt;
+Lightning @ Wombat, Melbourne
+.timeline-date[
+2017/05
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+`sugrrants` v0.1.0 CRAN release
+.timeline-date[
+2017/07
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+[**Calendar-based graphics for visualizing people’s daily schedules**](http://pub.earo.me/calendar-vis.pdf) submitted to JSS
+.timeline-date[
+2017/08
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+[**Analysing sub-daily time series data**](http://slides.earo.me/meetup17/) &lt;br&gt;
+Invited talk @ MelbURN, Melbourne
+.timeline-date[
+2017/10
+]]]]
+]
+]
+
+---
+
+.left-column[
+## Timeline
+### - Done
+]
+.right-column[
+.timeline.timeline-left.timeline-with-arrows[
+.timeline-block[
+.arrow-right[
+.timeline-content[
+[**Calendar-based graphics for visualizing people’s daily schedules**](http://slides.earo.me/iasc17/) &lt;br&gt;
+Contributed talk @ IASC, Auckland
+.timeline-date[
+2017/12
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+`tsibble` v0.1.0 CRAN release
+.timeline-date[
+2018/01
+]]]]
+.timeline-block[
+.arrow-right[
+.timeline-content[
+**Calendar-based graphics for visualizing people’s daily schedules**
+won 2018 ASA Statistical Graphics Student Paper Award
+.timeline-date[
+2018/01
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+[**When time series meets tibble, it’s tsibble!**](http://slides.earo.me/rstudioconf18/tsibble.pdf)
+Poster @ rstudio::conf, San Diego
+.timeline-date[
+2018/01
+]]]]
+]
+]
+
+---
+
+.left-column[
+## Timeline
+### - Done
+### - ToDo
+]
+.right-column[
+.timeline.timeline-left.timeline-with-arrows[
+.timeline-block[
+.arrow-right[
+.timeline-content[
+Academic visit @ Paris &amp; Brussels
+.timeline-date[
+2018/04
+]]]]
+.timeline-block[
+.arrow-right[
+.timeline-content[
+**Tidy data structures to support exploration and modeling of temporal-context data**
+submitted JCGS
+.timeline-date[
+2018/07
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+**Tidy data structures to support exploration and modeling of temporal-context data** &lt;br&gt;
+Contributed talk @ UseR!2018, Brisbane
+.timeline-date[
+2018/07
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+**Calendar-based graphics for visualizing people’s daily schedules** &lt;br&gt;
+Contributed talk @ JSM, Vancouver
+.timeline-date[
+2018/08
+]]]]
+]
+]
+
+---
+
+
+.left-column[
+## Timeline
+### - Done
+### - ToDo
+]
+.right-column[
+.timeline.timeline-left.timeline-with-arrows[
+.timeline-block[
+.arrow-right[
+.timeline-content[
+**Tidy data structures to support exploration and modeling of temporal-context data** &lt;br&gt;
+Contributed talk @ ISCB, Melbourne
+.timeline-date[
+2018/08
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+**Visualisation of time series with nested and crossed factors**
+.timeline-date[
+2019/03
+]]]]
+
+.timeline-block[
+.arrow-right[
+.timeline-content[
+Thesis ✌️
+.timeline-date[
+2019/06
+]]]]
+]
+]
 
 ---
 

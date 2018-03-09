@@ -85,6 +85,7 @@ flights$tailnum[flights$tailnum == ""] <- NA
 ## rm duplicates due to corrupted data (my reasoning)
 dup <- flights %>% 
   inform_duplicates(key = id(flight), index = sched_dep_datetime)
-flights <- flights[!dup, ]
+flights <- flights[!dup, ] %>% 
+  arrange(flight, sched_dep_datetime)
 
 write_rds(flights, path = "data/flights.rds", compress = "bz2")
