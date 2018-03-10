@@ -1,3 +1,5 @@
+/* credit: */
+/* https://www.cssscript.com/minimalist-vertical-timeline-with-pure-css-timelined/ */
 .timeline {
   box-sizing: border-box; }
   .timeline::before {
@@ -50,8 +52,9 @@
     position: relative;
     width: 45%;
     padding: 5px;
-    background-color: #EEE;
+    background-color: #deebf7;
     border: 1px solid #e5e5e5;
+    border-radius: 0 12px 12px 12px;
     line-height: 20px;
     min-height: 64px; }
   .timeline .timeline-date {
@@ -297,7 +300,7 @@
   border-color: transparent; }
 
 .timeline.timeline-with-arrows .timeline-content::after {
-  border-left-color: #EEE;
+  border-left-color: #deebf7;
   border-width: 14px;
   margin-left: 0;
   margin-top: 0; }
@@ -314,7 +317,7 @@
   border-left-color: transparent !important; }
 
 .timeline.timeline-with-arrows.timeline-left .timeline-content::after {
-  border-right-color: #EEE;
+  border-right-color: #deebf7;
   margin-left: -28px; }
 
 .timeline.timeline-with-arrows.timeline-left .timeline-content::before {
@@ -328,7 +331,7 @@
   border-left-color: transparent !important; }
 
 .timeline.timeline-with-arrows.timeline-alternating .timeline-block:nth-of-type(2n) .timeline-content::after {
-  border-right-color: #EEE;
+  border-right-color: #deebf7;
   margin-left: -28px; }
 
 .timeline.timeline-with-arrows.timeline-alternating .timeline-block:nth-of-type(2n) .timeline-content::before {
@@ -342,7 +345,7 @@
     right: 100%;
     border-left-color: transparent !important; }
   .timeline.timeline-with-arrows .timeline-content::after {
-    border-right-color: #EEE;
+    border-right-color: #deebf7;
     margin-left: -28px; }
   .timeline.timeline-with-arrows .timeline-content::before {
     border-right-color: #e5e5e5;
@@ -362,7 +365,7 @@
   .timeline-icon.timeline-icon-text span {
     display: inline-block;
     width: auto;
-    background-color: #EEE;
+    background-color: #deebf7;
     border: 1px solid #e5e5e5;
     padding: 0 10px; }
   @media screen and (max-width: 800px) {

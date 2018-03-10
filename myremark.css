@@ -18,7 +18,7 @@ h1, h2, h3 {
   background-position: center;
   background-repeat: no-repeat;
   display: table-cell;
-  font-size: 23px;
+  font-size: 21px;
   padding: 1em 4em 1em 4em;
 }
 .footnote {
@@ -35,16 +35,16 @@ h1, h2, h3 {
   position: relative;
   float: left;
   border-radius: 12px;
-  background-color: rgb(248, 248, 251);
+  background-color: #e5f5e0;
   overflow: hidden;
   font-size: 18px;
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: auto;
 }
-  .flowchart:last-child {
-    background-color: #bcbddc;
-  }
+  /* .flowchart:last-child { */
+  /*   background-color: #bcbddc; */
+  /* } */
 li { line-height: 1.65em; }
 li p { line-height: 1.25em; }
 li {
@@ -60,6 +60,16 @@ ul li li:before {
   content: "\f1fe";
   font-family: "FontAwesome";
   margin-right: 10px;
+}
+.x ul li:before {
+  content: "\f00d";
+  font-family: "FontAwesome";
+  color: #D00000;
+}
+.checked ul li:before {
+  content: "\f00c";
+  font-family: "FontAwesome";
+  color: #31a354;
 }
 .red { color: #D00000; }
 .orange { color: #FFBA08; }
@@ -80,7 +90,8 @@ code {
   background: #f8f8f8;
   border-radius: 5px;
 }
-.remark-code, .remark-inline-code { font-family: 'Source Code Pro'; font-size: 80%; }
+.remark-code, .remark-inline-code { font-family: 'Source Code Pro'; font-size: 16px; }
+.remark-code, .remark-code-line { font-family: 'Source Code Pro'; font-size: 86%; }
 /* .remark-code-line-highlighted     { background-color: #ffffb3; } */
 .pull-left {
   float: left;
@@ -178,36 +189,32 @@ code {
   }
 }
 
-/* .shake{ */
-/*   display: inline-block; */
-/*   animation: shake 0.82s 5 cubic-bezier(.36,.07,.19,.97) both; */
-/*   transform: translate3d(0, 0, 0); */
-/*   backface-visibility: hidden; */
-/*   perspective: 1000px; */
-/* } */
-
-.shake:hover {
+.shake{
   display: inline-block;
-  animation: shake 0.82s 5 cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.58s infinite cubic-bezier(.36,.07,.19,.97) both;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
 
+.shake:hover {
+  animation: none;
+}
+
 @keyframes shake {
   10%, 90% {
-    transform: translate3d(-1px, 0, 0) rotate(0deg);
+    transform: translate3d(-1px, 0, 0);
   }
   
   20%, 80% {
-    transform: translate3d(2px, 0, 0) rotate(-1deg);
+    transform: translate3d(2px, 0, 0);
   }
 
   30%, 50%, 70% {
-    transform: translate3d(-4px, 0, 0) rotate(0deg);
+    transform: translate3d(-4px, 0, 0);
   }
 
   40%, 60% {
-    transform: translate3d(4px, 0, 0) rotate(-1deg);
+    transform: translate3d(4px, 0, 0);
   }
 }

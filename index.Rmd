@@ -15,7 +15,7 @@ output:
 
 ```{r initial, echo = FALSE, cache = FALSE, results = 'hide'}
 library(knitr)
-options(htmltools.dir.version = FALSE, tibble.width = 60)
+options(htmltools.dir.version = FALSE, tibble.width = 60, tibble.print_min = 6)
 opts_chunk$set(
   echo = FALSE, warning = FALSE, message = FALSE, comment = "#>",
   fig.path = 'figure/', cache.path = 'cache/', fig.align = 'center', 
@@ -67,10 +67,10 @@ class: inverse bottom center
 * multiple measured variables
 ]
 .pull-right[
-* fine time scale
+* fine scale time resolution
 * multiple grouping variables
 ]
-.center[<img src="img/data-snapshot.png" height=440px>]
+.center[<img src="img/data-snapshot.png" height=460px>]
 
 ---
 
@@ -94,7 +94,7 @@ where $X_{jt}$ represents series $j$, for $j = 1, \dots, p$ and $1 \leq t \leq T
 It requires
 
 * homogeneity (numerical variables)
-* implicitly inferred time indices
+* time indices implicitly inferred as attributes/meta-information
 
 --
 
@@ -102,12 +102,67 @@ This matrix format is **model-centric**.
 
 ---
 
-## Force the fitting of a square peg into a round hole.
+class: middle
 
-* heterogeneous data types
-* explicitly declared index variable
-* syntax to describe nested or crossed factors
-* pipeline analysis
+## The matrix structure
+
+.x[
+* discards interesting information in the data;
+* is more opaque in handling of the temporal components;
+* is less efficient for many other data analysis tasks, like forcing the fitting of a square peg into a round hole (削足适履).
+]
+
+---
+
+class: middle
+
+## Programmatic workflow
+
+.pull-left[
+```{r echo = TRUE, eval = FALSE}
+for (...) {
+  if (...) {
+    ...
+  } else {
+    ...
+  }
+  for (...) {
+  }
+}
+...
+for (...) {
+  if (...) {
+    ...
+  } else {
+    ...
+  }
+  for (...) {
+  }
+}
+```
+]
+
+--
+
+.pull-right[
+.shake[<img src="img/duang.png" size=50%>]
+> Where I'm doing wrong?
+
+> What I'm doing?
+]
+
+---
+
+class: middle
+
+## Instead, we'd like
+
+.checked[
+* heterogeneous data types to keep the richness of data
+* explicitly declared index variable to be easily accessible
+* a syntactical approach to express nested or crossed factors
+* data pipelines to facilitate the workflow
+]
 
 ---
 
@@ -164,6 +219,24 @@ Make a table
 ### - index
 ]
 .right-column[
+An explicitly declared variable (e.g. `sched_dep_datetime`) which could contain:
+* date/date-time: 
+```{r}
+seq(ymd_hm("2018-03-14 16:00"), by = "15 mins", length.out = 2)
+```
+* year-month:
+```{r}
+yearmonth(seq(2018, by = 1 / 12, length.out = 2))
+```
+* year-quarter:
+```{r}
+yearquarter(seq(2018, by = 1 / 4, length.out = 2))
+```
+* year:
+```{r}
+seq(2017, by = 1, length.out = 2)
+```
+* and etc.
 ]
 
 ---
@@ -175,6 +248,23 @@ Make a table
 ### - key
 ]
 .right-column[
+Uniquely identifies each unit that measurements take place on over time:
+* single: 
+```{r, echo = TRUE, eval = FALSE}
+id(flight)
+```
+* nested:
+```{r, echo = TRUE, eval = FALSE}
+id(origin | origin_city | origin_state)
+```
+* crossed:
+```{r, echo = TRUE, eval = FALSE}
+id(origin, dest)
+```
+* nested & crossed
+```{r, echo = TRUE, eval = FALSE}
+id(origin | origin_state, dest | dest_state)
+```
 ]
 
 ---
@@ -184,21 +274,179 @@ Make a table
 ### - definition
 ### - index
 ### - key
-### - verb+noun
+### - tsibble
 ]
 .right-column[
+```{r echo = TRUE, eval = FALSE}
+library(tsibble)
+flights %>% 
+  as_tsibble(key = id(flight), 
+    index = sched_dep_datetime, regular = FALSE)
+```
+
+```
+*#> # A tsibble: 11,076,746 x 27 [!]
+*#> # Keys:      flight [24,647]
+#>    flight sched_dep_datetime  dep_time sched_dep_time
+#>    <chr>  <dttm>                 <int>          <int>
+#>  1 AA1    2016-01-01 09:00:00      856            900
+#>  2 AA1    2016-01-02 09:00:00      857            900
+#>  3 AA1    2016-01-03 09:00:00      913            900
+#>  4 AA1    2016-01-04 09:00:00      903            900
+#>  5 AA1    2016-01-05 09:00:00      850            900
+#>  6 AA1    2016-01-06 09:00:00      855            900
+#> # ... with 11,076,740 more rows, and 23 more variables:
+#> #   dep_delay <dbl>, arr_time <int>, sched_arr_time <int>,
+#> #   arr_delay <dbl>, carrier <chr>, tailnum <chr>,
+#> #   origin <chr>, dest <chr>, air_time <dbl>,
+#> #   distance <dbl>, origin_city_name <chr>,
+#> #   origin_state <chr>, origin_state_name <chr>,
+#> #   dest_city_name <chr>, dest_state <chr>,
+#> #   dest_state_name <chr>, taxi_out <dbl>, taxi_in <dbl>,
+#> #   carrier_delay <dbl>, weather_delay <dbl>,
+#> #   nas_delay <dbl>, security_delay <dbl>,
+#> #   late_aircraft_delay <dbl>
+```
+
 ]
 
 ---
 
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+### - tsibble
+]
+.right-column[
+.center[.large[I. flexible]]
 
-
-## 
+Make a chart
+]
 
 ---
 
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+### - tsibble
+]
+.right-column[
+.center[.large[II. mapping from data semantics to its physical layout]]
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+### - tsibble
+]
+.right-column[
+.center[.large[III. WYTIWYG]]
+
+.pull-left[
+**verb+noun**
+
+filter observations for 2017
+]
+.pull-right[
+**function+variable**
+
+```r
+filter(index == 2017)
+```
+]
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+### - tsibble
+]
+.right-column[
+.center[.large[III. WYTIWYG]]
+
+.pull-left[
+**verb+noun**
+
+select variable except for `a`
+]
+.pull-right[
+**function+variable**
+
+```r
+select(-a)
+```
+]
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+### - tsibble
+]
+.right-column[
+.center[.large[III. WYTIWYG]]
+
+.pull-left[
+**verb+noun**
+
+add a new variable `z`
+]
+.pull-right[
+**function+variable**
+
+```r
+mutate(z = x * y)
+```
+]
+]
+
+---
+
+.left-column[
+## Tidy temporal data
+### - definition
+### - index
+### - key
+### - tsibble
+]
+.right-column[
+.center[.large[IV. verbs]]
+
+A consistent set of verbs to solve a wide range of data transformation problems:
+
+* row-wise: `filter()`, `slice()`, `arrange()`, `fill_na()`
+* column-wise: `mutate()`, `select()`, `summarise()`, `tsummarise()`
+
+These all naturally work with `group_by()`.
+
+* rolling window: `slide()`, `tile()`, `stretch()`
+]
+
+---
+
+.left-column[
+## Data pipelines
+]
+.right-column[
 .flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
 .flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
+]
 
 ---
 
@@ -228,7 +476,7 @@ Lightning @ Wombat, Melbourne
 .timeline-block[
 .arrow-right[
 .timeline-content[
-`sugrrants` v0.1.0 CRAN release
+sugrrants v0.1.0 CRAN release
 .timeline-date[
 2017/07
 ]]]]
@@ -272,7 +520,7 @@ Contributed talk @ IASC, Auckland
 .timeline-block[
 .arrow-right[
 .timeline-content[
-`tsibble` v0.1.0 CRAN release
+tsibble v0.1.0 CRAN release
 .timeline-date[
 2018/01
 ]]]]
@@ -280,7 +528,7 @@ Contributed talk @ IASC, Auckland
 .arrow-right[
 .timeline-content[
 **Calendar-based graphics for visualizing people’s daily schedules**
-won 2018 ASA Statistical Graphics Student Paper Award
+won the 2018 ASA Statistical Graphics Student Paper Award
 .timeline-date[
 2018/01
 ]]]]
@@ -304,7 +552,7 @@ Poster @ rstudio::conf, San Diego
 ### - ToDo
 ]
 .right-column[
-.timeline.timeline-left.timeline-with-arrows[
+.timeline.timeline-left.purple-flirt.timeline-with-arrows[
 .timeline-block[
 .arrow-right[
 .timeline-content[
@@ -350,7 +598,7 @@ Contributed talk @ JSM, Vancouver
 ### - ToDo
 ]
 .right-column[
-.timeline.timeline-left.timeline-with-arrows[
+.timeline.timeline-left.purple-flirt.timeline-with-arrows[
 .timeline-block[
 .arrow-right[
 .timeline-content[
@@ -377,6 +625,14 @@ Thesis `r emo::ji("v")`
 ]]]]
 ]
 ]
+
+---
+
+class: inverse middle center
+
+## Joint work with Di & Rob
+
+<img src="img/super.jpg" height=420px size=50%>
 
 ---
 

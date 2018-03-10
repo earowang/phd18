@@ -42,3 +42,8 @@ ggplot() +
   geom_point(data = map_dat, aes(x = origin_lon, y = origin_lat), 
     colour = "#f1a340", size  = 1.5) +
   ggthemes::theme_map()
+
+## ---- tsibble
+flights_ts <- flights %>% 
+  as_tsibble(key = id(flight), index = sched_dep_datetime, regular = FALSE)
+flights_ts
