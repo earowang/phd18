@@ -28,6 +28,8 @@ read_chunk('src/code.R')
 ```{r load-pkgs}
 ```
 
+```{r theme-remark}
+```
 
 class: middle
 
@@ -277,8 +279,14 @@ id(origin | origin_state, dest | dest_state)
 ### - tsibble
 ]
 .right-column[
+
+```{r load-data, cache.lazy = FALSE, eval = FALSE}
+```
+
+```{r tsibble, cache.lazy = FALSE, eval = FALSE}
+```
+
 ```{r echo = TRUE, eval = FALSE}
-library(tsibble)
 flights %>% 
   as_tsibble(key = id(flight), 
     index = sched_dep_datetime, regular = FALSE)
@@ -348,20 +356,27 @@ Make a chart
 ### - tsibble
 ]
 .right-column[
-.center[.large[III. WYTIWYG]]
+.center[.large[III. WYTIWYC]]
 
-.pull-left[
-**verb+noun**
+`r emo::ji("one")` select variables `flight`, `sched_dep_datetime`, `dep_delay`
 
-filter observations for 2017
-]
-.pull-right[
-**function+variable**
-
-```r
-filter(index == 2017)
+```{r select, echo = TRUE, cache.lazy = FALSE, eval = FALSE}
 ```
-]
+
+```
+#> # A tsibble: 11,076,746 x 3 [!]
+#> # Keys:      flight [24,647]
+#>   flight sched_dep_datetime  dep_delay
+#>   <chr>  <dttm>                  <dbl>
+#> 1 AA1    2016-01-01 09:00:00       -4.
+#> 2 AA1    2016-01-02 09:00:00       -3.
+#> 3 AA1    2016-01-03 09:00:00       13.
+#> 4 AA1    2016-01-04 09:00:00        3.
+#> 5 AA1    2016-01-05 09:00:00      -10.
+#> 6 AA1    2016-01-06 09:00:00       -5.
+#> # ... with 1.108e+07 more rows
+```
+
 ]
 
 ---
@@ -374,20 +389,27 @@ filter(index == 2017)
 ### - tsibble
 ]
 .right-column[
-.center[.large[III. WYTIWYG]]
+.center[.large[III. WYTIWYC]]
 
-.pull-left[
-**verb+noun**
+`r emo::ji("two")` filter observations for 2017
 
-select variable except for `a`
-]
-.pull-right[
-**function+variable**
-
-```r
-select(-a)
+```{r filter, echo = TRUE, cache.lazy = FALSE, eval = FALSE}
 ```
-]
+
+```
+#> # A tsibble: 5,560,846 x 3 [!]
+#> # Keys:      flight [22,563]
+#>   flight sched_dep_datetime  dep_delay
+#>   <chr>  <dttm>                  <dbl>
+#> 1 AA1    2017-01-01 08:00:00       31.
+#> 2 AA1    2017-01-02 08:00:00       -3.
+#> 3 AA1    2017-01-03 08:00:00       -6.
+#> 4 AA1    2017-01-04 08:00:00       -3.
+#> 5 AA1    2017-01-05 08:00:00       -7.
+#> 6 AA1    2017-01-06 08:00:00       -3.
+#> # ... with 5.561e+06 more rows
+```
+
 ]
 
 ---
@@ -400,20 +422,32 @@ select(-a)
 ### - tsibble
 ]
 .right-column[
-.center[.large[III. WYTIWYG]]
+.center[.large[III. WYTIWYC]]
 
-.pull-left[
-**verb+noun**
+`r emo::ji("three")` aggregate to monthly averages
 
-add a new variable `z`
-]
-.pull-right[
-**function+variable**
-
-```r
-mutate(z = x * y)
+```{r tsum, echo = TRUE, cache.lazy = FALSE, eval = FALSE}
 ```
-]
+
+```
+#> # A tsibble: 12 x 2 [1MONTH]
+#>       yrmth avg_delay
+#>       <mth>     <dbl>
+#>  1 2017 Jan     12.1 
+#>  2 2017 Feb      7.10
+#>  3 2017 Mar      9.28
+#>  4 2017 Apr     12.1 
+#>  5 2017 May     10.8 
+#>  6 2017 Jun     13.6 
+#>  7 2017 Jul     13.1 
+#>  8 2017 Aug     11.1 
+#>  9 2017 Sep      5.25
+#> 10 2017 Oct      6.64
+#> 11 2017 Nov      4.26
+#> 12 2017 Dec      9.89
+```
+
+
 ]
 
 ---
@@ -440,13 +474,184 @@ These all naturally work with `group_by()`.
 
 ---
 
-.left-column[
+class: inverse middle center
+
 ## Data pipelines
+### break up a big problem into manageable pieces
+
+---
+
+## Question
+
+Have time of the day and day of the week an effect on the on-time performance?
+
+--
+
+```{r delayed-facet, fig.height = 9}
+```
+
+---
+
+```{r n-flights-2017, echo = TRUE, cache.lazy = FALSE, eval = FALSE}
+```
+
+```
+#> # A tsibble: 22,855 x 6 [1HOUR]
+#> # Keys:      dep_delay_break [3]
+#>   dep_delay_break sched_dep_datetime  n_flight  hour date       wday 
+#>   <chr>           <dttm>                 <int> <int> <date>     <ord>
+#> 1 15-60 mins      2017-01-01 00:00:00        3     0 2017-01-01 Sun  
+#> 2 15-60 mins      2017-01-01 01:00:00        1     1 2017-01-01 Sun  
+#> 3 15-60 mins      2017-01-01 02:00:00        2     2 2017-01-01 Sun  
+#> 4 15-60 mins      2017-01-01 05:00:00       14     5 2017-01-01 Sun  
+#> 5 15-60 mins      2017-01-01 06:00:00       49     6 2017-01-01 Sun  
+#> 6 15-60 mins      2017-01-01 07:00:00       68     7 2017-01-01 Sun  
+#> # ... with 2.285e+04 more rows
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` <br> subset time window
 ]
-.right-column[
-.flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
-.flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
 ]
+
+```{r, echo = TRUE, eval = FALSE}
+n_flights <- flights %>% 
+* filter(year(sched_dep_datetime) == 2017) %>% 
+  mutate(dep_delay_break = case_when(
+    dep_delay <= 15 ~ "ontime",
+    dep_delay <= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %>% 
+  group_by(dep_delay_break) %>% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %>% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` <br> subset time window
+* `mutate()` <br> create a new variable
+]
+]
+
+```{r, echo = TRUE, eval = FALSE}
+n_flights <- flights %>% 
+  filter(year(sched_dep_datetime) == 2017) %>% 
+* mutate(dep_delay_break = case_when(
+*   dep_delay <= 15 ~ "ontime",
+*   dep_delay <= 60 ~ "15-60 mins",
+*   TRUE ~ "60+ mins"
+* )) %>% 
+  group_by(dep_delay_break) %>% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %>% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` <br> subset time window
+* `mutate()` <br> create a new variable
+* `tsummarise()` <br> aggregate to hourly intervals
+]
+]
+
+```{r, echo = TRUE, eval = FALSE}
+n_flights <- flights %>% 
+  filter(year(sched_dep_datetime) == 2017) %>% 
+  mutate(dep_delay_break = case_when(
+    dep_delay <= 15 ~ "ontime",
+    dep_delay <= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %>% 
+* group_by(dep_delay_break) %>% 
+* tsummarise(
+*   floor_date(sched_dep_datetime, unit = "hour"), 
+*   n_flight = n()
+* ) %>% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` <br> subset time window
+* `mutate()` <br> create a new variable
+* `tsummarise()` <br> aggregate to hourly intervals
+* `mutate()` <br> augment time units
+]
+]
+
+```{r, echo = TRUE, eval = FALSE}
+n_flights <- flights %>% 
+  filter(year(sched_dep_datetime) == 2017) %>% 
+  mutate(dep_delay_break = case_when(
+    dep_delay <= 15 ~ "ontime",
+    dep_delay <= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %>% 
+  group_by(dep_delay_break) %>% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %>% 
+* mutate(
+*   hour = hour(sched_dep_datetime),
+*   date = as_date(sched_dep_datetime),
+*   wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+* )
+```
+
+---
+
+## Visualise using the grammar of graphics
+
+```{r echo = TRUE, eval = FALSE}
+ggplot(n_flights) +
+  geom_line(aes(x = hour, y = n_flight, group = date), alpha = 0.25) +
+  geom_line(
+    aes(x = hour, y = avg_n_flight, colour = dep_delay_break), 
+    data = avg_n_flights,
+  ) +
+  facet_grid(dep_delay_break ~ wday, scales = "free_y")
+```
+
+.center[<img src="figure/delayed-facet-1.svg" height=380px>]
+
+
 
 ---
 

@@ -5,6 +5,20 @@ library(tsibble)
 # devtools::install_github("heike/ggmapr")
 library(ggmapr)
 
+## ---- theme-remark
+theme_remark <- function() {
+  theme_grey() +
+  theme(
+    axis.text = element_text(size = 14), 
+    strip.text = element_text(size = 16), 
+    axis.title = element_text(size = 16),
+    legend.title = element_text(size = 16), 
+    legend.text = element_text(size = 16),
+    legend.position = "bottom"
+  )
+}
+theme_set(theme_remark())
+
 ## ---- load-data
 flights <- read_rds("data/flights.rds")
 
@@ -44,6 +58,68 @@ ggplot() +
   ggthemes::theme_map()
 
 ## ---- tsibble
-flights_ts <- flights %>% 
-  as_tsibble(key = id(flight), index = sched_dep_datetime, regular = FALSE)
-flights_ts
+flights <- flights %>% 
+  as_tsibble(key = id(flight), index = sched_dep_datetime, regular = FALSE,
+    validate = FALSE)
+
+## ---- select
+flights_sel <- flights %>% 
+  select(flight, sched_dep_datetime, dep_delay)
+flights_sel
+
+## ---- filter
+flights_fil <- flights_sel %>% 
+  filter(year(sched_dep_datetime) == 2017)
+flights_fil
+
+## ---- tsum
+flights_tsum <- flights_fil %>% 
+  tsummarise(
+    yrmth = yearmonth(sched_dep_datetime),
+    avg_delay = mean(dep_delay)
+  )
+flights_tsum
+
+## ----- n-flights-2017
+n_flights <- flights %>% 
+  filter(year(sched_dep_datetime) == 2017) %>% 
+  mutate(dep_delay_break = case_when(
+    dep_delay <= 15 ~ "ontime",
+    dep_delay <= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %>% 
+  group_by(dep_delay_break) %>% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %>% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+n_flights
+
+## ----- n-flights-rds
+write_rds(as_tibble(n_flights), "data/tsibble/n_flights.rds")
+
+## ---- delayed-facet
+n_flights <- read_rds("data/tsibble/n_flights.rds")
+avg_n_flights <- n_flights %>% 
+  group_by(dep_delay_break, wday, hour) %>% 
+  summarise(avg_n_flight = mean(n_flight, na.rm = TRUE), drop = TRUE)
+
+n_flights %>% 
+  ggplot() +
+  geom_line(aes(x = hour, y = n_flight, group = date), alpha = 0.25, size = 0.4) +
+  geom_line(
+    aes(x = hour, y = avg_n_flight, colour = dep_delay_break), 
+    data = avg_n_flights, size = 1
+  ) +
+  facet_grid(dep_delay_break ~ wday, scales = "free_y") +
+  theme_remark() +
+  guides(colour = guide_legend(title = "Depature Delay")) +
+  xlab("Time of day") +
+  ylab("Number of flights") +
+  scale_x_continuous(breaks = seq(6, 23, by = 6)) +
+  scale_colour_brewer(palette = "Dark2")

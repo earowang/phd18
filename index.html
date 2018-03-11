@@ -25,6 +25,7 @@ class: center, middle, inverse, title-slide
 
 
 
+
 class: middle
 
 ## Agenda
@@ -282,8 +283,12 @@ id(origin | origin_state, dest | dest_state)
 ]
 .right-column[
 
+
+
+
+
+
 ```r
-library(tsibble)
 flights %&gt;% 
   as_tsibble(key = id(flight), 
     index = sched_dep_datetime, regular = FALSE)
@@ -353,20 +358,31 @@ Make a chart
 ### - tsibble
 ]
 .right-column[
-.center[.large[III. WYTIWYG]]
+.center[.large[III. WYTIWYC]]
 
-.pull-left[
-**verb+noun**
+1️⃣ select variables `flight`, `sched_dep_datetime`, `dep_delay`
 
-filter observations for 2017
-]
-.pull-right[
-**function+variable**
 
 ```r
-filter(index == 2017)
+flights_sel &lt;- flights %&gt;% 
+  select(flight, sched_dep_datetime, dep_delay)
+flights_sel
 ```
-]
+
+```
+#&gt; # A tsibble: 11,076,746 x 3 [!]
+#&gt; # Keys:      flight [24,647]
+#&gt;   flight sched_dep_datetime  dep_delay
+#&gt;   &lt;chr&gt;  &lt;dttm&gt;                  &lt;dbl&gt;
+#&gt; 1 AA1    2016-01-01 09:00:00       -4.
+#&gt; 2 AA1    2016-01-02 09:00:00       -3.
+#&gt; 3 AA1    2016-01-03 09:00:00       13.
+#&gt; 4 AA1    2016-01-04 09:00:00        3.
+#&gt; 5 AA1    2016-01-05 09:00:00      -10.
+#&gt; 6 AA1    2016-01-06 09:00:00       -5.
+#&gt; # ... with 1.108e+07 more rows
+```
+
 ]
 
 ---
@@ -379,20 +395,31 @@ filter(index == 2017)
 ### - tsibble
 ]
 .right-column[
-.center[.large[III. WYTIWYG]]
+.center[.large[III. WYTIWYC]]
 
-.pull-left[
-**verb+noun**
+2️⃣ filter observations for 2017
 
-select variable except for `a`
-]
-.pull-right[
-**function+variable**
 
 ```r
-select(-a)
+flights_fil &lt;- flights_sel %&gt;% 
+  filter(year(sched_dep_datetime) == 2017)
+flights_fil
 ```
-]
+
+```
+#&gt; # A tsibble: 5,560,846 x 3 [!]
+#&gt; # Keys:      flight [22,563]
+#&gt;   flight sched_dep_datetime  dep_delay
+#&gt;   &lt;chr&gt;  &lt;dttm&gt;                  &lt;dbl&gt;
+#&gt; 1 AA1    2017-01-01 08:00:00       31.
+#&gt; 2 AA1    2017-01-02 08:00:00       -3.
+#&gt; 3 AA1    2017-01-03 08:00:00       -6.
+#&gt; 4 AA1    2017-01-04 08:00:00       -3.
+#&gt; 5 AA1    2017-01-05 08:00:00       -7.
+#&gt; 6 AA1    2017-01-06 08:00:00       -3.
+#&gt; # ... with 5.561e+06 more rows
+```
+
 ]
 
 ---
@@ -405,20 +432,39 @@ select(-a)
 ### - tsibble
 ]
 .right-column[
-.center[.large[III. WYTIWYG]]
+.center[.large[III. WYTIWYC]]
 
-.pull-left[
-**verb+noun**
+3️⃣ aggregate to monthly averages
 
-add a new variable `z`
-]
-.pull-right[
-**function+variable**
 
 ```r
-mutate(z = x * y)
+flights_tsum &lt;- flights_fil %&gt;% 
+  tsummarise(
+    yrmth = yearmonth(sched_dep_datetime),
+    avg_delay = mean(dep_delay)
+  )
+flights_tsum
 ```
-]
+
+```
+#&gt; # A tsibble: 12 x 2 [1MONTH]
+#&gt;       yrmth avg_delay
+#&gt;       &lt;mth&gt;     &lt;dbl&gt;
+#&gt;  1 2017 Jan     12.1 
+#&gt;  2 2017 Feb      7.10
+#&gt;  3 2017 Mar      9.28
+#&gt;  4 2017 Apr     12.1 
+#&gt;  5 2017 May     10.8 
+#&gt;  6 2017 Jun     13.6 
+#&gt;  7 2017 Jul     13.1 
+#&gt;  8 2017 Aug     11.1 
+#&gt;  9 2017 Sep      5.25
+#&gt; 10 2017 Oct      6.64
+#&gt; 11 2017 Nov      4.26
+#&gt; 12 2017 Dec      9.89
+```
+
+
 ]
 
 ---
@@ -445,13 +491,207 @@ These all naturally work with `group_by()`.
 
 ---
 
-.left-column[
+class: inverse middle center
+
 ## Data pipelines
+### break up a big problem into manageable pieces
+
+---
+
+## Question
+
+Have time of the day and day of the week an effect on the on-time performance?
+
+--
+
+&lt;img src="figure/delayed-facet-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+```r
+n_flights &lt;- flights %&gt;% 
+  filter(year(sched_dep_datetime) == 2017) %&gt;% 
+  mutate(dep_delay_break = case_when(
+    dep_delay &lt;= 15 ~ "ontime",
+    dep_delay &lt;= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %&gt;% 
+  group_by(dep_delay_break) %&gt;% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %&gt;% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+n_flights
+```
+
+```
+#&gt; # A tsibble: 22,855 x 6 [1HOUR]
+#&gt; # Keys:      dep_delay_break [3]
+#&gt;   dep_delay_break sched_dep_datetime  n_flight  hour date       wday 
+#&gt;   &lt;chr&gt;           &lt;dttm&gt;                 &lt;int&gt; &lt;int&gt; &lt;date&gt;     &lt;ord&gt;
+#&gt; 1 15-60 mins      2017-01-01 00:00:00        3     0 2017-01-01 Sun  
+#&gt; 2 15-60 mins      2017-01-01 01:00:00        1     1 2017-01-01 Sun  
+#&gt; 3 15-60 mins      2017-01-01 02:00:00        2     2 2017-01-01 Sun  
+#&gt; 4 15-60 mins      2017-01-01 05:00:00       14     5 2017-01-01 Sun  
+#&gt; 5 15-60 mins      2017-01-01 06:00:00       49     6 2017-01-01 Sun  
+#&gt; 6 15-60 mins      2017-01-01 07:00:00       68     7 2017-01-01 Sun  
+#&gt; # ... with 2.285e+04 more rows
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` &lt;br&gt; subset time window
 ]
-.right-column[
-.flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
-.flowchart[`filter()` ojfeojfo j fejfoeojfw ojfowjf]
 ]
+
+
+```r
+n_flights &lt;- flights %&gt;% 
+* filter(year(sched_dep_datetime) == 2017) %&gt;% 
+  mutate(dep_delay_break = case_when(
+    dep_delay &lt;= 15 ~ "ontime",
+    dep_delay &lt;= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %&gt;% 
+  group_by(dep_delay_break) %&gt;% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %&gt;% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` &lt;br&gt; subset time window
+* `mutate()` &lt;br&gt; create a new variable
+]
+]
+
+
+```r
+n_flights &lt;- flights %&gt;% 
+  filter(year(sched_dep_datetime) == 2017) %&gt;% 
+* mutate(dep_delay_break = case_when(
+*   dep_delay &lt;= 15 ~ "ontime",
+*   dep_delay &lt;= 60 ~ "15-60 mins",
+*   TRUE ~ "60+ mins"
+* )) %&gt;% 
+  group_by(dep_delay_break) %&gt;% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %&gt;% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` &lt;br&gt; subset time window
+* `mutate()` &lt;br&gt; create a new variable
+* `tsummarise()` &lt;br&gt; aggregate to hourly intervals
+]
+]
+
+
+```r
+n_flights &lt;- flights %&gt;% 
+  filter(year(sched_dep_datetime) == 2017) %&gt;% 
+  mutate(dep_delay_break = case_when(
+    dep_delay &lt;= 15 ~ "ontime",
+    dep_delay &lt;= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %&gt;% 
+* group_by(dep_delay_break) %&gt;% 
+* tsummarise(
+*   floor_date(sched_dep_datetime, unit = "hour"), 
+*   n_flight = n()
+* ) %&gt;% 
+  mutate(
+    hour = hour(sched_dep_datetime),
+    date = as_date(sched_dep_datetime),
+    wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+  )
+```
+
+---
+
+## Pipeline
+
+.block[
+.flowchart[
+* `filter()` &lt;br&gt; subset time window
+* `mutate()` &lt;br&gt; create a new variable
+* `tsummarise()` &lt;br&gt; aggregate to hourly intervals
+* `mutate()` &lt;br&gt; augment time units
+]
+]
+
+
+```r
+n_flights &lt;- flights %&gt;% 
+  filter(year(sched_dep_datetime) == 2017) %&gt;% 
+  mutate(dep_delay_break = case_when(
+    dep_delay &lt;= 15 ~ "ontime",
+    dep_delay &lt;= 60 ~ "15-60 mins",
+    TRUE ~ "60+ mins"
+  )) %&gt;% 
+  group_by(dep_delay_break) %&gt;% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    n_flight = n()
+  ) %&gt;% 
+* mutate(
+*   hour = hour(sched_dep_datetime),
+*   date = as_date(sched_dep_datetime),
+*   wday = wday(sched_dep_datetime, label = TRUE, week_start = 1)
+* )
+```
+
+---
+
+## Visualise using the grammar of graphics
+
+
+```r
+ggplot(n_flights) +
+  geom_line(aes(x = hour, y = n_flight, group = date), alpha = 0.25) +
+  geom_line(
+    aes(x = hour, y = avg_n_flight, colour = dep_delay_break), 
+    data = avg_n_flights,
+  ) +
+  facet_grid(dep_delay_break ~ wday, scales = "free_y")
+```
+
+.center[&lt;img src="figure/delayed-facet-1.svg" height=380px&gt;]
+
+
 
 ---
 

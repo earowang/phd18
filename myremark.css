@@ -27,24 +27,7 @@ h1, h2, h3 {
   font-style: italic;
   font-size: 70%;
 }
-.flowchart {
-  margin: 12px 20px 0 0;
-  max-width: 160px;
-  padding: 5px;
-  display: block;
-  position: relative;
-  float: left;
-  border-radius: 12px;
-  background-color: #e5f5e0;
-  overflow: hidden;
-  font-size: 18px;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  hyphens: auto;
-}
-  /* .flowchart:last-child { */
-  /*   background-color: #bcbddc; */
-  /* } */
+
 li { line-height: 1.65em; }
 li p { line-height: 1.25em; }
 li {
@@ -71,6 +54,33 @@ ul li li:before {
   font-family: "FontAwesome";
   color: #31a354;
 }
+.block {
+	display: table;   /* Allow the centering to work */
+	margin: 0 auto;
+}
+.flowchart li {
+  margin: 12px 20px 0 0;
+  max-width: 145px;
+  padding: 5px;
+  float: left;
+  text-align: center;
+  line-height: 1.2em;
+  border-radius: 12px;
+  background-color: #f7f7f7;
+  font-size: 18px;
+  /* overflow-wrap: break-word; */
+  /* word-wrap: break-word; */
+  /* hyphens: auto; */
+}
+.flowchart li:last-child {
+  background-color: #e5f5e0;
+}
+.flowchart ul li {
+  display: inline;
+}
+.flowchart ul li:before {
+  content: none;
+}
 .red { color: #D00000; }
 .orange { color: #FFBA08; }
 .blue { color: #3F88C5; }
@@ -92,7 +102,9 @@ code {
 }
 .remark-code, .remark-inline-code { font-family: 'Source Code Pro'; font-size: 16px; }
 .remark-code, .remark-code-line { font-family: 'Source Code Pro'; font-size: 86%; }
-/* .remark-code-line-highlighted     { background-color: #ffffb3; } */
+.remark-code-line-highlighted {
+  background-color: #e5f5e0;
+}
 .pull-left {
   float: left;
   width: 47%;
