@@ -2,6 +2,7 @@
 library(lubridate)
 library(tidyverse)
 library(tsibble)
+library(sugrrants)
 # devtools::install_github("heike/ggmapr")
 library(ggmapr)
 
@@ -100,7 +101,7 @@ n_flights <- flights %>%
   )
 n_flights
 
-## ----- n-flights-rds
+## ---- n-flights-rds
 write_rds(as_tibble(n_flights), "data/tsibble/n_flights.rds")
 
 ## ---- delayed-facet
@@ -123,3 +124,49 @@ n_flights %>%
   ylab("Number of flights") +
   scale_x_continuous(breaks = seq(6, 23, by = 6)) +
   scale_colour_brewer(palette = "Dark2")
+
+## ---- delay-qtl-data
+delay_qtl <- flights %>% 
+  filter(
+    year(sched_dep_datetime) == 2017,
+    hour(sched_dep_datetime) > 4
+  ) %>% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    qtl50 = quantile(dep_delay, 0.5),
+    qtl80 = quantile(dep_delay, 0.8),
+    qtl95 = quantile(dep_delay, 0.95)
+  ) %>% 
+  mutate(
+    zero = 0,
+    hour = hour(sched_dep_datetime), 
+    date = as_date(sched_dep_datetime)
+  )
+delay_qtl
+
+## ---- delay-qtl-data-rds
+write_rds(as_tibble(delay_qtl), "data/tsibble/delay_qtl.rds")
+
+## ---- delay-qtl-cal
+delay_qtl <- read_rds("data/tsibble/delay_qtl.rds")
+qtl_cal <- delay_qtl %>% 
+  frame_calendar(
+    x = hour, y = vars(qtl95, qtl80, qtl50, zero), date = date,
+  )
+
+break_cols <- c(
+  "50%" = "#d7301f", 
+  "80%" = "#fc8d59", 
+  "95%" = "#fdcc8a"
+)
+
+p_qtl <- ggplot(qtl_cal, aes(x = .hour, group = date)) +
+  geom_ribbon(aes(ymin = .zero, ymax = .qtl95, fill = "95%")) +
+  geom_ribbon(aes(ymin = .zero, ymax = .qtl80, fill = "80%")) +
+  geom_ribbon(aes(ymin = .zero, ymax = .qtl50, fill = "50%")) +
+  scale_fill_manual(
+    name = "Departure delay",
+    values = break_cols
+  ) +
+  theme_remark()
+prettify(p_qtl)

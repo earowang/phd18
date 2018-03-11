@@ -78,7 +78,7 @@ class: inverse bottom center
 
 ## However ...
 
-The current structure that underlies the time series objects:
+The current structure that underlies time series objects:
 
 \begin{equation}
   \begin{bmatrix}
@@ -186,7 +186,7 @@ class: inverse middle center
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ]
 .right-column[
@@ -195,36 +195,32 @@ class: inverse middle center
 * Each observation forms a row.
 * Each type of observational unit forms a table.
 
-Make a table
-]
-
----
-
-.left-column[
-## Tidy temporal data
-### - definition
-]
-.right-column[
 .large[Tidy temporal data:]
 * **index**: an explicitly declared variable containing time indices.
 * **key**: uniquely identifies each unit that measurements take place on over time.
 * **interval**: a common time interval if data with regular time interval.
 
-Make a table
+<!--
+.center[<img src="img/tidy.png" height=130px>]
+-->
 ]
 
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ]
 .right-column[
 An explicitly declared variable (e.g. `sched_dep_datetime`) which could contain:
-* date/date-time: 
+* date-time: 
 ```{r}
 seq(ymd_hm("2018-03-14 16:00"), by = "15 mins", length.out = 2)
+```
+* date:
+```{r}
+seq(ymd("2018-03-13"), by = 1, length.out = 2)
 ```
 * year-month:
 ```{r}
@@ -244,7 +240,7 @@ seq(2017, by = 1, length.out = 2)
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -272,7 +268,7 @@ id(origin | origin_state, dest | dest_state)
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -321,7 +317,7 @@ flights %>%
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -330,13 +326,13 @@ flights %>%
 .right-column[
 .center[.large[I. flexible]]
 
-Make a chart
+.center[<img src="img/melt.png">]
 ]
 
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -344,12 +340,14 @@ Make a chart
 ]
 .right-column[
 .center[.large[II. mapping from data semantics to its physical layout]]
+
+.center[<img src="img/semantics.png">]
 ]
 
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -377,12 +375,13 @@ Make a chart
 #> # ... with 1.108e+07 more rows
 ```
 
+.center[<img src="img/select.png" height=150>]
 ]
 
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -410,12 +409,13 @@ Make a chart
 #> # ... with 5.561e+06 more rows
 ```
 
+.center[<img src="img/filter.png" height=150>]
 ]
 
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -453,7 +453,7 @@ Make a chart
 ---
 
 .left-column[
-## Tidy temporal data
+<img src="img/tsibble.svg" height=120px>
 ### - definition
 ### - index
 ### - key
@@ -483,7 +483,7 @@ class: inverse middle center
 
 ## Question
 
-Have time of the day and day of the week an effect on the on-time performance?
+Do time of the day and day of the week affect the on-time performance in 2017?
 
 --
 
@@ -492,26 +492,7 @@ Have time of the day and day of the week an effect on the on-time performance?
 
 ---
 
-```{r n-flights-2017, echo = TRUE, cache.lazy = FALSE, eval = FALSE}
-```
-
-```
-#> # A tsibble: 22,855 x 6 [1HOUR]
-#> # Keys:      dep_delay_break [3]
-#>   dep_delay_break sched_dep_datetime  n_flight  hour date       wday 
-#>   <chr>           <dttm>                 <int> <int> <date>     <ord>
-#> 1 15-60 mins      2017-01-01 00:00:00        3     0 2017-01-01 Sun  
-#> 2 15-60 mins      2017-01-01 01:00:00        1     1 2017-01-01 Sun  
-#> 3 15-60 mins      2017-01-01 02:00:00        2     2 2017-01-01 Sun  
-#> 4 15-60 mins      2017-01-01 05:00:00       14     5 2017-01-01 Sun  
-#> 5 15-60 mins      2017-01-01 06:00:00       49     6 2017-01-01 Sun  
-#> 6 15-60 mins      2017-01-01 07:00:00       68     7 2017-01-01 Sun  
-#> # ... with 2.285e+04 more rows
-```
-
----
-
-## Pipeline
+## Pipeline I
 
 .block[
 .flowchart[
@@ -541,7 +522,7 @@ n_flights <- flights %>%
 
 ---
 
-## Pipeline
+## Pipeline I
 
 .block[
 .flowchart[
@@ -572,7 +553,7 @@ n_flights <- flights %>%
 
 ---
 
-## Pipeline
+## Pipeline I
 
 .block[
 .flowchart[
@@ -604,7 +585,7 @@ n_flights <- flights %>%
 
 ---
 
-## Pipeline
+## Pipeline I
 
 .block[
 .flowchart[
@@ -637,7 +618,25 @@ n_flights <- flights %>%
 
 ---
 
-## Visualise using the grammar of graphics
+```{r n-flights-2017, echo = TRUE, cache.lazy = FALSE, eval = FALSE}
+```
+
+```
+#> # A tsibble: 22,855 x 6 [1HOUR]
+#> # Keys:      dep_delay_break [3]
+#>   dep_delay_break sched_dep_datetime  n_flight  hour date       wday 
+#>   <chr>           <dttm>                 <int> <int> <date>     <ord>
+#> 1 15-60 mins      2017-01-01 00:00:00        3     0 2017-01-01 Sun  
+#> 2 15-60 mins      2017-01-01 01:00:00        1     1 2017-01-01 Sun  
+#> 3 15-60 mins      2017-01-01 02:00:00        2     2 2017-01-01 Sun  
+#> 4 15-60 mins      2017-01-01 05:00:00       14     5 2017-01-01 Sun  
+#> 5 15-60 mins      2017-01-01 06:00:00       49     6 2017-01-01 Sun  
+#> 6 15-60 mins      2017-01-01 07:00:00       68     7 2017-01-01 Sun  
+#> # ... with 2.285e+04 more rows
+```
+---
+
+## Pipe into the grammar of graphics
 
 ```{r echo = TRUE, eval = FALSE}
 ggplot(n_flights) +
@@ -651,7 +650,102 @@ ggplot(n_flights) +
 
 .center[<img src="figure/delayed-facet-1.svg" height=380px>]
 
+---
 
+background-image: url(img/calendar.png)
+background-size: cover
+
+class: inverse center bottom
+
+# Pipeline II: calendar-based visualisation <img src="img/sugrrants.svg" height=120px size=50%>
+
+---
+
+## Pipeline II: quantiles of departure delay into a calendar layout
+
+.block[
+.flowchart[
+* `filter()` <br> subset time window
+* `tsummarise()` <br> aggregate to hourly intervals
+* `mutate()` <br> augment time units
+* `frame_calendar()` <br> re-structure into a calendar layout
+]
+]
+
+```{r delay-qtl-data-pseudo, echo = TRUE, eval = FALSE}
+delay_qtl <- flights %>% 
+  filter(
+    year(sched_dep_datetime) == 2017, 
+    hour(sched_dep_datetime) > 4
+  ) %>% 
+  tsummarise(
+    floor_date(sched_dep_datetime, unit = "hour"), 
+    qtl50 = quantile(dep_delay, 0.5),
+    qtl80 = quantile(dep_delay, 0.8),
+    qtl95 = quantile(dep_delay, 0.95)
+  ) %>% 
+  mutate(
+    zero = 0,
+    hour = hour(sched_dep_datetime), 
+    date = as_date(sched_dep_datetime)
+  ) %>% 
+* frame_calendar(
+*   x = hour, y = vars(qtl95, qtl80, qtl50, zero), date = date,
+* )
+```
+
+<!--
+```
+#> # A tsibble: 6,935 x 7 [1HOUR]
+#>   sched_dep_datetime  qtl50 qtl80 qtl95  zero  hour date      
+#>   <dttm>              <dbl> <dbl> <dbl> <dbl> <int> <date>    
+#> 1 2017-01-01 05:00:00   -2.  3.00  29.1    0.     5 2017-01-01
+#> 2 2017-01-01 06:00:00   -3.  2.80  39.7    0.     6 2017-01-01
+#> 3 2017-01-01 07:00:00   -3.  5.00  51.0    0.     7 2017-01-01
+#> 4 2017-01-01 08:00:00   -2.  5.00  46.0    0.     8 2017-01-01
+#> 5 2017-01-01 09:00:00   -2.  8.00  57.6    0.     9 2017-01-01
+#> 6 2017-01-01 10:00:00   -2. 10.0   75.4    0.    10 2017-01-01
+#> # ... with 6,929 more rows
+```
+-->
+
+---
+
+```{r delay-qtl-cal, fig.height = 10}
+```
+---
+
+## Pipeline II: calendarise the data
+
+.center[<img src="img/month.png" width = 380>]
+
+The grid position for any day in the month is given by
+
+$$\begin{align}
+i &= \lceil (g \mod 35) / 7\rceil \\ j &= g \mod 7.
+\end{align}$$
+
+Let $h$ and $c$ be the scaled hour and quantiles, respectively, then the final
+coordinates are given by:
+
+$$\begin{align}
+x &= j + h \\ y &= i - q.
+\end{align}$$
+
+---
+
+## Wrap-up
+
+---
+
+## Visualisation of time series with nested and crossed factors
+
+.pull-left[
+<img src="img/nesting.png" width = 380>
+]
+.pull-right[
+<img src="img/crossing.png" width = 380>
+]
 
 ---
 
