@@ -262,7 +262,7 @@ id(origin | origin_city | origin_state)
 ```r
 id(origin, dest)
 ```
-* nested &amp; crossed
+* nested &amp; crossed:
 
 ```r
 id(origin | origin_state, dest | dest_state)
@@ -287,8 +287,11 @@ id(origin | origin_state, dest | dest_state)
 
 ```r
 flights %&gt;% 
-  as_tsibble(key = id(flight), 
-    index = sched_dep_datetime, regular = FALSE)
+  as_tsibble(
+    key = id(flight), 
+    index = sched_dep_datetime, 
+    regular = FALSE
+  )
 ```
 
 ```
@@ -329,6 +332,8 @@ flights %&gt;%
 .right-column[
 .center[.large[I. flexible]]
 
+&lt;br&gt;
+&lt;br&gt;
 .center[&lt;img src="img/melt.png"&gt;]
 ]
 
@@ -487,6 +492,7 @@ A consistent set of verbs to solve a wide range of data transformation problems:
 
 These all naturally work with `group_by()`.
 
+* join two tables: `left_join()`, `right_join()`, `full_join()`, `semi_join()`, `anti_join()`
 * rolling window: `slide()`, `tile()`, `stretch()`
 ]
 
@@ -775,17 +781,57 @@ x &amp;= j + h \\ y &amp;= i - q.
 
 ---
 
-## Wrap-up
+class: inverse middle center
+
+# Wrap-up
+
+---
+
+## Data science pipeline
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;img src="img/data-science.png"&gt;
+
+---
+
+class: middle
+
+.top[&lt;img src="img/tsibble.svg" height=80px&gt;]
+
+## Tidy temporal data
+
+* Rectangular structure: heterogeneous data type, multiple measured and grouping variables, implict missing values, and etc.
+* An explicitly declared index variable and a set of keys
+* A mapping bridging the semantics of a dataset to its physical representation
+* A data pipeline that supports thinking of operations on the data variables
+
+---
+
+class: middle
+
+.top[&lt;img src="img/sugrrants.svg" height=80px&gt;]
+
+## Calendar-based graphics
+
+* Easily integrated as part of data pipelines
+* Synchronise neatly with grammar of graphics
+* Patterns on special events more easily pop out to the viewer
+* Useful for studying sub-daily time series related to human behaviours
 
 ---
 
 ## Visualisation of time series with nested and crossed factors
 
+&lt;br&gt;
+&lt;br&gt;
+.middle[
 .pull-left[
-&lt;img src="img/nesting.png" width = 380&gt;
+&lt;img src="img/nesting.png" width = 280&gt;
 ]
 .pull-right[
-&lt;img src="img/crossing.png" width = 380&gt;
+&lt;img src="img/crossing.png" width = 280&gt;
+]
 ]
 
 ---
