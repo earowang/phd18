@@ -45,7 +45,7 @@ class: bottom center
 
 # USA airline traffic in 2016 &amp; 2017
 
-*data source: [Bureau of Transportation Statistics](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236)*
+*data source: [US Bureau of Transportation Statistics](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236)*
 
 ---
 
@@ -104,9 +104,13 @@ class: middle
 
 .x[
 * discards interesting information in the data;
-* is more opaque in handling of the temporal components;
-* is less efficient for many other data analysis tasks, like forcing the fitting of a square peg into a round hole (削足适履).
+* implicit not explicit in handling of the temporal components;
+* fails to support transparent workflow.
 ]
+
+???
+
+not transparent (leading to mistakes)
 
 ---
 
@@ -772,7 +776,7 @@ The grid position for any day in the month is given by
 i &amp;= \lceil (g \mod 35) / 7\rceil \\ j &amp;= g \mod 7.
 \end{align}$$`
 
-Let `\(h\)` and `\(c\)` be the scaled hour and quantiles, respectively, then the final
+Let `\(h\)` and `\(q\)` be the scaled hour and quantiles, respectively, then the final
 coordinates are given by:
 
 `$$\begin{align}
@@ -795,8 +799,6 @@ class: inverse middle center
 
 ---
 
-class: middle
-
 .top[&lt;img src="img/tsibble.svg" height=80px&gt;]
 
 ## Tidy temporal data
@@ -806,22 +808,33 @@ class: middle
 * A mapping bridging the semantics of a dataset to its physical representation
 * A data pipeline that supports thinking of operations on the data variables
 
----
+.center[&lt;img src="img/semantics.png" height=280&gt;]
 
-class: middle
+---
 
 .top[&lt;img src="img/sugrrants.svg" height=80px&gt;]
 
-## Calendar-based graphics
+## Calendar-based visualisation
 
 * Easily integrated as part of data pipelines
 * Synchronise neatly with grammar of graphics
 * Patterns on special events more easily pop out to the viewer
 * Useful for studying sub-daily time series related to human behaviours
 
+.center[&lt;img src="figure/delay-qtl-cal-1.svg" height=380&gt;]
+
 ---
 
+class: inverse middle center
+
 ## Visualisation of time series with nested and crossed factors
+
+### student enrollment data: e.g. dept | faculty, campus
+### previous modelling work
+
+???
+
+## .blue[Visualisation of time series with nested and crossed factors]
 
 &lt;br&gt;
 &lt;br&gt;
