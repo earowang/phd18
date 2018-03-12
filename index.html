@@ -30,9 +30,15 @@ class: middle
 
 ## Agenda
 
-* **WIP**: Tidy data structures to support exploration and modeling of temporal-context data
-* **Done**: Calendar-based graphics for visualising people’s daily schedules
-* **ToDo**: Visualisation of time series with nested and crossed factors
+* **WIP**: Tidy data structures to support exploration and modeling of temporal-context data (chapter 3)
+* **Done**: Calendar-based graphics for visualising people’s daily schedules (chapter 2)
+* **ToDo**: Visualisation of time series with nested and crossed factors (chapter 4)
+
+???
+
+* First, I'll spend most of the time talking about
+* Then, I'll briefly review my first-year work
+* Finally,
 
 ---
 
@@ -47,6 +53,12 @@ class: bottom center
 
 *data source: [US Bureau of Transportation Statistics](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236)*
 
+???
+
+* as usual, the data comes first.
+* last year, I looked at the foot traffic
+* The first sight of this map is a bit overwhelming I suppose, but the main message is there are a few hubs and sporadic airports.
+
 ---
 
 background-image: url(img/data-snapshot.png)
@@ -56,21 +68,34 @@ class: inverse bottom center
 
 # Data snapshot
 
+???
+
+* This dataset is actually about the on-time performance for each flight at its scheduled departure time.
+* There are 11m obs.
+* It's not that big but bigish.
+
 ---
 
 .pull-left[
 * heterogeneous data types
-* multiple measured variables
+* fine scale time resolution
 ]
 .pull-right[
-* fine scale time resolution
+* multiple measured variables
 * multiple grouping variables
 ]
 .center[&lt;img src="img/data-snapshot.png" height=460px&gt;]
 
+???
+
+* as you can see, this dataset is quite rich with lots of information.
+* it features
+
 ---
 
 ## However ...
+
+--
 
 The current structure that underlies time series objects:
 
@@ -87,14 +112,14 @@ where `\(X_{jt}\)` represents series `\(j\)`, for `\(j = 1, \dots, p\)` and `\(1
 
 --
 
-It requires
+This matrix structure requires
 
 * homogeneity (numerical variables)
 * time indices implicitly inferred as attributes/meta-information
 
---
+???
 
-This matrix format is **model-centric**.
+it's a bit frustrating to work with this kind of temporal data.
 
 ---
 
@@ -104,53 +129,17 @@ class: middle
 
 .x[
 * discards interesting information in the data;
-* implicit not explicit in handling of the temporal components;
+* is implicit not explicit in handling of the temporal components;
 * fails to support transparent workflow.
 ]
 
 ???
 
+* if we actually put the data into the matrix container, we would throw out lots of interesting pieces.
+* more opaque in dealing with temporal components
+* and therefore it leads to non-transparent workflow 
+
 not transparent (leading to mistakes)
-
----
-
-class: middle
-
-## Programmatic workflow
-
-.pull-left[
-
-```r
-for (...) {
-  if (...) {
-    ...
-  } else {
-    ...
-  }
-  for (...) {
-  }
-}
-...
-for (...) {
-  if (...) {
-    ...
-  } else {
-    ...
-  }
-  for (...) {
-  }
-}
-```
-]
-
---
-
-.pull-right[
-.shake[&lt;img src="img/duang.png" size=50%&gt;]
-&gt; Where I'm doing wrong?
-
-&gt; What I'm doing?
-]
 
 ---
 
@@ -164,6 +153,10 @@ class: middle
 * a syntactical approach to express nested or crossed factors
 * data pipelines to facilitate the workflow
 ]
+
+???
+
+
 
 ---
 
@@ -189,19 +182,85 @@ class: inverse middle center
 ### - definition
 ]
 .right-column[
+.large[Tidy data principles:.red[*]]
+* Each variable forms a column.
+* Each observation forms a row.
+* Each type of observational unit forms a table.
+&lt;!--
+.center[&lt;img src="img/tidy.png" height=130px&gt;]
+--&gt;
+]
+
+.footnote[.red[*] Wickham, H (2014). Tidy Data. Journal of Statistical Software 59(10), 1–23.]
+
+???
+
+There are three interrelate rules to make a dataset tidy.
+
+---
+
+.left-column[
+&lt;img src="img/tsibble.svg" height=120px&gt;
+### - definition
+]
+.right-column[
 .large[Tidy data principles:]
 * Each variable forms a column.
 * Each observation forms a row.
 * Each type of observational unit forms a table.
 
+.center[<i class="fa  fa-plus "></i>]
+
 .large[Tidy temporal data:]
 * **index**: an explicitly declared variable containing time indices.
 * **key**: uniquely identifies each unit that measurements take place on over time.
 * **interval**: a common time interval if data with regular time interval.
+]
 
-&lt;!--
-.center[&lt;img src="img/tidy.png" height=130px&gt;]
---&gt;
+---
+
+.left-column[
+&lt;img src="img/tsibble.svg" height=120px&gt;
+### - definition
+]
+.right-column[
+
+
+
+
+
+```r
+flights %&gt;% 
+  as_tsibble(
+    key = id(flight), 
+    index = sched_dep_datetime, 
+    regular = FALSE
+  )
+```
+
+```
+*#&gt; # A tsibble: 11,076,746 x 27 [!]
+*#&gt; # Keys:      flight [24,647]
+#&gt;    flight sched_dep_datetime  dep_time sched_dep_time
+#&gt;    &lt;chr&gt;  &lt;dttm&gt;                 &lt;int&gt;          &lt;int&gt;
+#&gt;  1 AA1    2016-01-01 09:00:00      856            900
+#&gt;  2 AA1    2016-01-02 09:00:00      857            900
+#&gt;  3 AA1    2016-01-03 09:00:00      913            900
+#&gt;  4 AA1    2016-01-04 09:00:00      903            900
+#&gt;  5 AA1    2016-01-05 09:00:00      850            900
+#&gt;  6 AA1    2016-01-06 09:00:00      855            900
+#&gt; # ... with 11,076,740 more rows, and 23 more variables:
+#&gt; #   dep_delay &lt;dbl&gt;, arr_time &lt;int&gt;, sched_arr_time &lt;int&gt;,
+#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, tailnum &lt;chr&gt;,
+#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+#&gt; #   distance &lt;dbl&gt;, origin_city_name &lt;chr&gt;,
+#&gt; #   origin_state &lt;chr&gt;, origin_state_name &lt;chr&gt;,
+#&gt; #   dest_city_name &lt;chr&gt;, dest_state &lt;chr&gt;,
+#&gt; #   dest_state_name &lt;chr&gt;, taxi_out &lt;dbl&gt;, taxi_in &lt;dbl&gt;,
+#&gt; #   carrier_delay &lt;dbl&gt;, weather_delay &lt;dbl&gt;,
+#&gt; #   nas_delay &lt;dbl&gt;, security_delay &lt;dbl&gt;,
+#&gt; #   late_aircraft_delay &lt;dbl&gt;
+```
 ]
 
 ---
@@ -280,58 +339,7 @@ id(origin | origin_state, dest | dest_state)
 ### - definition
 ### - index
 ### - key
-### - tsibble
-]
-.right-column[
-
-
-
-
-
-
-```r
-flights %&gt;% 
-  as_tsibble(
-    key = id(flight), 
-    index = sched_dep_datetime, 
-    regular = FALSE
-  )
-```
-
-```
-*#&gt; # A tsibble: 11,076,746 x 27 [!]
-*#&gt; # Keys:      flight [24,647]
-#&gt;    flight sched_dep_datetime  dep_time sched_dep_time
-#&gt;    &lt;chr&gt;  &lt;dttm&gt;                 &lt;int&gt;          &lt;int&gt;
-#&gt;  1 AA1    2016-01-01 09:00:00      856            900
-#&gt;  2 AA1    2016-01-02 09:00:00      857            900
-#&gt;  3 AA1    2016-01-03 09:00:00      913            900
-#&gt;  4 AA1    2016-01-04 09:00:00      903            900
-#&gt;  5 AA1    2016-01-05 09:00:00      850            900
-#&gt;  6 AA1    2016-01-06 09:00:00      855            900
-#&gt; # ... with 11,076,740 more rows, and 23 more variables:
-#&gt; #   dep_delay &lt;dbl&gt;, arr_time &lt;int&gt;, sched_arr_time &lt;int&gt;,
-#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, tailnum &lt;chr&gt;,
-#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
-#&gt; #   distance &lt;dbl&gt;, origin_city_name &lt;chr&gt;,
-#&gt; #   origin_state &lt;chr&gt;, origin_state_name &lt;chr&gt;,
-#&gt; #   dest_city_name &lt;chr&gt;, dest_state &lt;chr&gt;,
-#&gt; #   dest_state_name &lt;chr&gt;, taxi_out &lt;dbl&gt;, taxi_in &lt;dbl&gt;,
-#&gt; #   carrier_delay &lt;dbl&gt;, weather_delay &lt;dbl&gt;,
-#&gt; #   nas_delay &lt;dbl&gt;, security_delay &lt;dbl&gt;,
-#&gt; #   late_aircraft_delay &lt;dbl&gt;
-```
-
-]
-
----
-
-.left-column[
-&lt;img src="img/tsibble.svg" height=120px&gt;
-### - definition
-### - index
-### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[I. flexible]]
@@ -348,7 +356,7 @@ flights %&gt;%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[II. mapping from data semantics to its physical layout]]
@@ -363,7 +371,7 @@ flights %&gt;%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[III. WYTIWYC]]
@@ -401,7 +409,7 @@ flights_sel
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[III. WYTIWYC]]
@@ -439,7 +447,7 @@ flights_fil
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[III. WYTIWYC]]
@@ -484,7 +492,7 @@ flights_tsum
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[IV. verbs]]

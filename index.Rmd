@@ -35,9 +35,15 @@ class: middle
 
 ## Agenda
 
-* **WIP**: Tidy data structures to support exploration and modeling of temporal-context data
-* **Done**: Calendar-based graphics for visualising people’s daily schedules
-* **ToDo**: Visualisation of time series with nested and crossed factors
+* **WIP**: Tidy data structures to support exploration and modeling of temporal-context data (chapter 3)
+* **Done**: Calendar-based graphics for visualising people’s daily schedules (chapter 2)
+* **ToDo**: Visualisation of time series with nested and crossed factors (chapter 4)
+
+???
+
+* First, I'll spend most of the time talking about
+* Then, I'll briefly review my first-year work
+* Finally,
 
 ---
 
@@ -53,6 +59,12 @@ class: bottom center
 
 *data source: [US Bureau of Transportation Statistics](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236)*
 
+???
+
+* as usual, the data comes first.
+* last year, I looked at the foot traffic
+* The first sight of this map is a bit overwhelming I suppose, but the main message is there are a few hubs and sporadic airports.
+
 ---
 
 background-image: url(img/data-snapshot.png)
@@ -62,21 +74,34 @@ class: inverse bottom center
 
 # Data snapshot
 
+???
+
+* This dataset is actually about the on-time performance for each flight at its scheduled departure time.
+* There are 11m obs.
+* It's not that big but bigish.
+
 ---
 
 .pull-left[
 * heterogeneous data types
-* multiple measured variables
+* fine scale time resolution
 ]
 .pull-right[
-* fine scale time resolution
+* multiple measured variables
 * multiple grouping variables
 ]
 .center[<img src="img/data-snapshot.png" height=460px>]
 
+???
+
+* as you can see, this dataset is quite rich with lots of information.
+* it features
+
 ---
 
 ## However ...
+
+--
 
 The current structure that underlies time series objects:
 
@@ -93,14 +118,14 @@ where $X_{jt}$ represents series $j$, for $j = 1, \dots, p$ and $1 \leq t \leq T
 
 --
 
-It requires
+This matrix structure requires
 
 * homogeneity (numerical variables)
 * time indices implicitly inferred as attributes/meta-information
 
---
+???
 
-This matrix format is **model-centric**.
+it's a bit frustrating to work with this kind of temporal data.
 
 ---
 
@@ -110,52 +135,17 @@ class: middle
 
 .x[
 * discards interesting information in the data;
-* implicit not explicit in handling of the temporal components;
+* is implicit not explicit in handling of the temporal components;
 * fails to support transparent workflow.
 ]
 
 ???
 
+* if we actually put the data into the matrix container, we would throw out lots of interesting pieces.
+* more opaque in dealing with temporal components
+* and therefore it leads to non-transparent workflow 
+
 not transparent (leading to mistakes)
-
----
-
-class: middle
-
-## Programmatic workflow
-
-.pull-left[
-```{r echo = TRUE, eval = FALSE}
-for (...) {
-  if (...) {
-    ...
-  } else {
-    ...
-  }
-  for (...) {
-  }
-}
-...
-for (...) {
-  if (...) {
-    ...
-  } else {
-    ...
-  }
-  for (...) {
-  }
-}
-```
-]
-
---
-
-.pull-right[
-.shake[<img src="img/duang.png" size=50%>]
-> Where I'm doing wrong?
-
-> What I'm doing?
-]
 
 ---
 
@@ -169,6 +159,10 @@ class: middle
 * a syntactical approach to express nested or crossed factors
 * data pipelines to facilitate the workflow
 ]
+
+???
+
+
 
 ---
 
@@ -194,92 +188,57 @@ class: inverse middle center
 ### - definition
 ]
 .right-column[
-.large[Tidy data principles:]
+.large[Tidy data principles:.red[*]]
 * Each variable forms a column.
 * Each observation forms a row.
 * Each type of observational unit forms a table.
-
-.large[Tidy temporal data:]
-* **index**: an explicitly declared variable containing time indices.
-* **key**: uniquely identifies each unit that measurements take place on over time.
-* **interval**: a common time interval if data with regular time interval.
-
 <!--
 .center[<img src="img/tidy.png" height=130px>]
 -->
 ]
 
----
+.footnote[.red[*] Wickham, H (2014). Tidy Data. Journal of Statistical Software 59(10), 1–23.]
 
-.left-column[
-<img src="img/tsibble.svg" height=120px>
-### - definition
-### - index
-]
-.right-column[
-An explicitly declared variable (e.g. `sched_dep_datetime`) which could contain:
-* date-time: 
-```{r}
-seq(ymd_hm("2018-03-14 16:00"), by = "15 mins", length.out = 2)
-```
-* date:
-```{r}
-seq(ymd("2018-03-13"), by = 1, length.out = 2)
-```
-* year-month:
-```{r}
-yearmonth(seq(2018, by = 1 / 12, length.out = 2))
-```
-* year-quarter:
-```{r}
-yearquarter(seq(2018, by = 1 / 4, length.out = 2))
-```
-* year:
-```{r}
-seq(2017, by = 1, length.out = 2)
-```
-* and etc.
-]
+???
+
+There are three interrelate rules to make a dataset tidy.
 
 ---
 
 .left-column[
 <img src="img/tsibble.svg" height=120px>
 ### - definition
-### - index
-### - key
 ]
 .right-column[
-Uniquely identifies each unit that measurements take place on over time:
-* single: 
-```{r, echo = TRUE, eval = FALSE}
-id(flight)
-```
-* nested:
-```{r, echo = TRUE, eval = FALSE}
-id(origin | origin_city | origin_state)
-```
-* crossed:
-```{r, echo = TRUE, eval = FALSE}
-id(origin, dest)
-```
-* nested & crossed:
-```{r, echo = TRUE, eval = FALSE}
-id(origin | origin_state, dest | dest_state)
-```
+.large[Tidy data principles[*]:]
+* Each variable forms a column.
+* Each observation forms a row.
+* Each type of observational unit forms a table.
+
+.center[`r icon::fa("plus")`]
+
+.large[Tidy temporal data:]
+* **index**: an explicitly declared variable containing time indices.
+* **key**: uniquely identifies each unit that measurements take place on over time.
+* **interval**: a common time interval if data with regular time interval.
 ]
+
+.footnote[.red[*] Wickham, H (2014). Tidy Data. Journal of Statistical Software 59(10), 1–23.]
+
+???
+
+* three extra conditions:
+* index forms the contextual base of the temporal data
+* key + index = primary key in the SQL database
+* the key could include single or multiple columns
 
 ---
 
 .left-column[
 <img src="img/tsibble.svg" height=120px>
 ### - definition
-### - index
-### - key
-### - tsibble
 ]
 .right-column[
-
 ```{r load-data, cache.lazy = FALSE, eval = FALSE}
 ```
 
@@ -318,7 +277,70 @@ flights %>%
 #> #   nas_delay <dbl>, security_delay <dbl>,
 #> #   late_aircraft_delay <dbl>
 ```
+]
 
+---
+
+.left-column[
+<img src="img/tsibble.svg" height=120px>
+### - definition
+### - index
+]
+.right-column[
+An explicitly declared variable (e.g. `sched_dep_datetime`) which could contain:
+* date-time: 
+```{r}
+seq(ymd_hm("2018-03-14 16:00"), by = "15 mins", length.out = 2)
+```
+* date:
+```{r}
+seq(ymd("2018-03-13"), by = 1, length.out = 2)
+```
+* year-month:
+```{r}
+yearmonth(seq(2018, by = 1 / 12, length.out = 2))
+```
+* year-quarter:
+```{r}
+yearquarter(seq(2018, by = 1 / 4, length.out = 2))
+```
+* year:
+```{r}
+seq(2017, by = 1, length.out = 2)
+```
+* and etc.
+]
+
+???
+
+Join other tables using the key
+
+---
+
+.left-column[
+<img src="img/tsibble.svg" height=120px>
+### - definition
+### - index
+### - key
+]
+.right-column[
+Uniquely identifies each unit that measurements take place on over time:
+* single: 
+```{r, echo = TRUE, eval = FALSE}
+id(flight)
+```
+* nested:
+```{r, echo = TRUE, eval = FALSE}
+id(origin | origin_city | origin_state)
+```
+* crossed:
+```{r, echo = TRUE, eval = FALSE}
+id(origin, dest)
+```
+* nested & crossed:
+```{r, echo = TRUE, eval = FALSE}
+id(origin | origin_state, dest | dest_state)
+```
 ]
 
 ---
@@ -328,7 +350,7 @@ flights %>%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[I. flexible]]
@@ -345,7 +367,7 @@ flights %>%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[II. mapping from data semantics to its physical layout]]
@@ -360,7 +382,7 @@ flights %>%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[III. WYTIWYC]]
@@ -394,7 +416,7 @@ flights %>%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[III. WYTIWYC]]
@@ -428,7 +450,7 @@ flights %>%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[III. WYTIWYC]]
@@ -466,7 +488,7 @@ flights %>%
 ### - definition
 ### - index
 ### - key
-### - tsibble
+### - why tsibble?
 ]
 .right-column[
 .center[.large[IV. verbs]]
