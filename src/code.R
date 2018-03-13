@@ -169,4 +169,50 @@ p_qtl <- ggplot(qtl_cal, aes(x = .hour, group = date)) +
     values = break_cols
   ) +
   theme_remark()
-prettify(p_qtl)
+prettify(p_qtl, label.padding = unit(0.12, "lines"))
+
+## ---- plotly-cal
+library(plotly)
+library(widgetframe)
+a <- list(
+  title = "",
+  zeroline = FALSE,
+  autotick = FALSE,
+  showticklabels = FALSE,
+  showline = FALSE,
+  showgrid = FALSE
+)
+
+lab_data <- attr(qtl_cal, "label")
+lab_data$label <- month.abb
+txt_data <- attr(qtl_cal, "text")
+txt_data$label <- c("M", "T", "W", "T", "F", "S", "S")
+
+cal_plot <- as_tibble(qtl_cal) %>%
+  group_by(date) %>%
+  plot_ly(
+    x = ~ .hour,
+    hoverinfo = "text"
+  ) %>%
+  add_ribbons(
+    ymin = ~ .zero, ymax = ~ .qtl95, color = I("#fdcc8a"),
+    text = ~ paste("Departure delay: ", round(qtl95), "<br> Date: ", date)
+  ) %>% 
+  add_ribbons(
+    ymin = ~ .zero, ymax = ~ .qtl80, color = I("#fc8d59"),
+    text = ~ paste("Departure delay: ", round(qtl80), "<br> Date: ", date)
+  ) %>% 
+  add_ribbons(
+    ymin = ~ .zero, ymax = ~ .qtl50, color = I("#d7301f"),
+    text = ~ paste("Departure delay: ", round(qtl50), "<br> Date: ", date)
+  ) %>% 
+  add_text(
+    x = ~ x, y = ~ y, text = ~ label, data = lab_data,
+    color = I("black")
+  ) %>%
+  add_text(
+    x = ~ x, y = ~ y - 0.03, text = ~ label, data = txt_data,
+    color = I("black")
+  )
+ply <- layout(cal_plot, showlegend = FALSE, xaxis = a, yaxis = a)
+frameWidget(ply)

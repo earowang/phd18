@@ -145,6 +145,46 @@ not transparent (leading to mistakes)
 
 class: middle
 
+## Non-transparent workflow
+
+.pull-left[
+
+```r
+for (...) {
+  if (...) {
+    ...
+  } else {
+    ...
+  }
+  for (...) {
+  }
+}
+...
+for (...) {
+  if (...) {
+    ...
+  } else {
+    ...
+  }
+  for (...) {
+  }
+}
+```
+]
+
+--
+
+.pull-right[
+.shake[&lt;img src="img/duang.png" size=50%&gt;]
+&gt; Where I'm doing wrong?
+
+&gt; What I'm doing?
+]
+
+---
+
+class: middle
+
 ## Instead, we'd like
 
 .checked[
@@ -182,7 +222,7 @@ class: inverse middle center
 ### - definition
 ]
 .right-column[
-.large[Tidy data principles:.red[*]]
+.large[Tidy data principles:.red[&lt;sup&gt;1&lt;/sup&gt;]]
 * Each variable forms a column.
 * Each observation forms a row.
 * Each type of observational unit forms a table.
@@ -191,7 +231,9 @@ class: inverse middle center
 --&gt;
 ]
 
-.footnote[.red[*] Wickham, H (2014). Tidy Data. Journal of Statistical Software 59(10), 1–23.]
+.footnote[
+.red[1.] Wickham, H (2014). Tidy data. Journal of Statistical Software 59(10), 1–23.
+]
 
 ???
 
@@ -204,7 +246,7 @@ There are three interrelate rules to make a dataset tidy.
 ### - definition
 ]
 .right-column[
-.large[Tidy data principles:]
+.large[Tidy data principles.red[&lt;sup&gt;1&lt;/sup&gt;]:]
 * Each variable forms a column.
 * Each observation forms a row.
 * Each type of observational unit forms a table.
@@ -212,10 +254,22 @@ There are three interrelate rules to make a dataset tidy.
 .center[<i class="fa  fa-plus "></i>]
 
 .large[Tidy temporal data:]
-* **index**: an explicitly declared variable containing time indices.
+* **index**: an explicitly declared variable containing time indices.red[&lt;sup&gt;2&lt;/sup&gt;].
 * **key**: uniquely identifies each unit that measurements take place on over time.
 * **interval**: a common time interval if data with regular time interval.
 ]
+
+.footnote[
+.red[1.] Wickham, H (2014). Tidy data. *Journal of Statistical Software* **59**(10), 1–23. &lt;br&gt;
+.red[2.] Grolemund, G. &amp; Wickham, H. (2011). Dates and times made easy with lubridate. *Journal of Statistical Software*, **40**(3), 1–25.
+]
+
+???
+
+* three additional info:
+* index forms the contextual base of the temporal data
+* key + index = primary key in the SQL database
+* the key could include single or multiple columns
 
 ---
 
@@ -300,6 +354,10 @@ An explicitly declared variable (e.g. `sched_dep_datetime`) which could contain:
 * and etc.
 ]
 
+???
+
+Join other tables using the key
+
 ---
 
 .left-column[
@@ -348,6 +406,14 @@ id(origin | origin_state, dest | dest_state)
 &lt;br&gt;
 .center[&lt;img src="img/melt.png"&gt;]
 ]
+
+???
+
+lubridate:
+
+simplicity matrix
+
+ground breaking for time series
 
 ---
 
@@ -512,8 +578,13 @@ These all naturally work with `group_by()`.
 
 class: inverse middle center
 
-## Data pipelines
+## Data pipelines.red[&lt;sup&gt;1,&lt;/sup&gt;&lt;sup&gt;2&lt;/sup&gt;]
 ### break up a big problem into manageable pieces
+
+.footnote[
+.red[1.] Buja, A., Asimov, D., Hurley G., &amp; McDonald J. (1988) Elements of a viewing piepline for data analysis. *Dynamic Graphics of Statistics* &lt;br&gt;
+.red[2.] Wickham, H., Lawrence, M., Cook, D. et al. (2009) The plumbing of interactive graphics. *Computational Statistics* **(24)**207
+]
 
 ---
 
@@ -805,6 +876,8 @@ class: inverse middle center
 &lt;br&gt;
 &lt;img src="img/data-science.png"&gt;
 
+.footnote[adapted from [r4ds](http://r4ds.had.co.nz/explore-intro.html)]
+
 ---
 
 .top[&lt;img src="img/tsibble.svg" height=80px&gt;]
@@ -837,7 +910,7 @@ class: inverse middle center
 
 ## Visualisation of time series with nested and crossed factors
 
-### student enrollment data: e.g. dept | faculty, campus
+### student enrolment data: e.g. dept | faculty, campus
 ### previous modelling work
 
 ???
@@ -1045,10 +1118,37 @@ class: inverse middle center
 
 class: inverse middle center
 
-### made with [<i class="fa  fa-heart "></i>]() and .orange[<i class="fa  fa-coffee "></i>]
-### xaringan ⚔️ slides &lt;http://slides.earo.me/phd18&gt;
-### reproducible &amp; open source &lt;https://github.com/earowang/phd18&gt;
-### This work is under licensed [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+### Made with [<i class="fa  fa-heart "></i>]() and .orange[<i class="fa  fa-coffee "></i>]
+
+--
+
+### Slides created via xaringan ⚔️ &lt;http://slides.earo.me/phd18&gt;
+
+--
+### Reproducible &amp; open source &lt;https://github.com/earowang/phd18&gt;
+
+--
+### This work is under licensed [<i class="fa  fa-creative-commons "></i> BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+
+--
+
+### Thank you!
+
+--
+
+### .
+
+--
+
+### .
+
+--
+
+### .
+
+--
+
+### THE END
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
