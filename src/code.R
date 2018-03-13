@@ -191,20 +191,29 @@ txt_data$label <- c("M", "T", "W", "T", "F", "S", "S")
 cal_plot <- as_tibble(qtl_cal) %>%
   group_by(date) %>%
   plot_ly(
-    x = ~ .hour,
-    hoverinfo = "text"
+    x = ~ .hour, hoverinfo = "text",
+    width = 700, height = 700
   ) %>%
   add_ribbons(
     ymin = ~ .zero, ymax = ~ .qtl95, color = I("#fdcc8a"),
-    text = ~ paste("Departure delay: ", round(qtl95), "<br> Date: ", date)
+    text = ~ paste(
+      "Departure delay: ", round(qtl95), "<br> Date: ", date,
+      "<br> Hour: ", hour
+    )
   ) %>% 
   add_ribbons(
     ymin = ~ .zero, ymax = ~ .qtl80, color = I("#fc8d59"),
-    text = ~ paste("Departure delay: ", round(qtl80), "<br> Date: ", date)
+    text = ~ paste(
+      "Departure delay: ", round(qtl80), "<br> Date: ", date,
+      "<br> Hour: ", hour
+    )
   ) %>% 
   add_ribbons(
     ymin = ~ .zero, ymax = ~ .qtl50, color = I("#d7301f"),
-    text = ~ paste("Departure delay: ", round(qtl50), "<br> Date: ", date)
+    text = ~ paste(
+      "Departure delay: ", round(qtl50), "<br> Date: ", date,
+      "<br> Hour: ", hour
+    )
   ) %>% 
   add_text(
     x = ~ x, y = ~ y, text = ~ label, data = lab_data,
@@ -214,5 +223,5 @@ cal_plot <- as_tibble(qtl_cal) %>%
     x = ~ x, y = ~ y - 0.03, text = ~ label, data = txt_data,
     color = I("black")
   )
-ply <- layout(cal_plot, showlegend = FALSE, xaxis = a, yaxis = a)
-frameWidget(ply)
+p <- layout(cal_plot, showlegend = FALSE, xaxis = a, yaxis = a)
+frameWidget(p)

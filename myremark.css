@@ -73,7 +73,7 @@ ul li li:before {
   /* hyphens: auto; */
 }
 .flowchart li:last-child {
-  background-color: #e5f5e0;
+  background-color: #fee8c8;
 }
 .flowchart ul li {
   display: inline;
@@ -103,7 +103,7 @@ code {
 .remark-code, .remark-inline-code { font-family: 'Source Code Pro'; font-size: 16px; }
 .remark-code, .remark-code-line { font-family: 'Source Code Pro'; font-size: 86%; }
 .remark-code-line-highlighted {
-  background-color: #e5f5e0;
+  background-color: #fee8c8;
 }
 .pull-left {
   float: left;

@@ -123,6 +123,8 @@ This matrix structure requires
 * homogeneity (numerical variables)
 * time indices implicitly inferred as attributes/meta-information
 
+It is **model-centric** rather than **data-centric**.
+
 ???
 
 it's a bit frustrating to work with this kind of temporal data.
@@ -141,7 +143,7 @@ class: middle
 
 ???
 
-* if we actually put the data into the matrix container, we would throw out lots of interesting pieces.
+* if we actually put the data into the matrix container, we would throw away lots of interesting pieces.
 * more opaque in dealing with temporal components
 * and therefore it leads to non-transparent workflow 
 
@@ -194,7 +196,7 @@ class: middle
 
 .checked[
 * heterogeneous data types to keep the richness of data
-* explicitly declared index variable to be easily accessible
+* an explicitly declared index variable to be easily accessible
 * a syntactical approach to express nested or crossed factors
 * data pipelines to facilitate the workflow
 ]
@@ -227,7 +229,7 @@ class: inverse middle center
 ### - definition
 ]
 .right-column[
-.large[Tidy data principles:.red[<sup>1</sup>]]
+.large[Tidy data principles.red[<sup>1</sup>]:]
 * Each variable forms a column.
 * Each observation forms a row.
 * Each type of observational unit forms a table.
@@ -274,7 +276,6 @@ There are three interrelate rules to make a dataset tidy.
 * three additional info:
 * index forms the contextual base of the temporal data
 * key + index = primary key in the SQL database
-* the key could include single or multiple columns
 
 ---
 
@@ -357,7 +358,10 @@ seq(2017, by = 1, length.out = 2)
 
 ???
 
-Join other tables using the key
+* the index variable is being declared explictly
+* extensible to trading days
+* why the explicit time indices turn out useful, the use case would be join the flight data with other tables, e.g. weather data based on the same timestamps.
+* impossible for implicit time index
 
 ---
 
@@ -387,6 +391,13 @@ id(origin | origin_state, dest | dest_state)
 ```
 ]
 
+???
+
+* The key could include a single or multiple columns
+* for example, sufficient to use flight to identify units
+* if the key consists of multiple vars, we need to consister they are nested or crossed.
+* e.g. a nesting structure in this case is the origin nested within the city | state. The ordering from lower to higher, using the vertical bar to describe the nesting
+
 ---
 
 .left-column[
@@ -406,11 +417,8 @@ id(origin | origin_state, dest | dest_state)
 
 ???
 
-lubridate:
-
-simplicity matrix
-
-ground breaking for time series
+* why tsibble is useful?
+* we are unable to recover this original dataset from this matrix, as it's a case of simplicity and doesn't accommodate actual datasets with rich info
 
 ---
 
@@ -426,6 +434,13 @@ ground breaking for time series
 
 .center[<img src="img/semantics.png">]
 ]
+
+???
+
+* variables are in columns, observations are in rows, and values are in cells.
+* Every value belongs to a variable and an observation
+* A variable contains all values that measure the same underlying attribute across units over time. 
+* An observation contains all values measured on the same unit at a time point across attributes.
 
 ---
 
@@ -461,6 +476,12 @@ ground breaking for time series
 .center[<img src="img/select.png" height=150>]
 ]
 
+???
+
+this mapping property takes us to what you think is what you code
+
+* operating on the columns
+
 ---
 
 .left-column[
@@ -494,6 +515,10 @@ ground breaking for time series
 
 .center[<img src="img/filter.png" height=150>]
 ]
+
+???
+
+* perform the operations on the rows
 
 ---
 
@@ -530,8 +555,11 @@ ground breaking for time series
 #> 12 2017 Dec      9.89
 ```
 
-
 ]
+
+???
+
+* You can see this process is very intuitive. You have a well-organised dataset and you think the verb to work on either variables or observations and you have the code already.
 
 ---
 
@@ -545,7 +573,7 @@ ground breaking for time series
 .right-column[
 .center[.large[IV. verbs]]
 
-A consistent set of verbs to solve a wide range of data transformation problems:
+A consistent set of verbs to solve a wide range of temporal data transformation problems:
 
 * row-wise: `filter()`, `slice()`, `arrange()`, `fill_na()`
 * column-wise: `mutate()`, `select()`, `summarise()`, `tsummarise()`
@@ -560,13 +588,17 @@ These all naturally work with `group_by()`.
 
 class: inverse middle center
 
-## Data pipelines.red[<sup>1,</sup><sup>2</sup>]
-### break up a big problem into manageable pieces
+## Data pipelines
+### break up a big problem into smaller pieces
 
 .footnote[
-.red[1.] Buja, A., Asimov, D., Hurley G., & McDonald J. (1988) Elements of a viewing piepline for data analysis. *Dynamic Graphics of Statistics* <br>
-.red[2.] Wickham, H., Lawrence, M., Cook, D. et al. (2009) The plumbing of interactive graphics. *Computational Statistics* **(24)**207
+.red[*] Buja, A., Asimov, D., Hurley G., & McDonald J. (1988) Elements of a viewing piepline for data analysis. <br>
+.red[*] Wickham, H., Lawrence, M., Cook, D. et al. (2009) The plumbing of interactive graphics. *Computational Statistics* **(24)**207
 ]
+
+???
+
+The tidy time series structure also supports thinking of operations on the data as part of a data pipeline
 
 ---
 
@@ -711,8 +743,8 @@ n_flights <- flights %>%
 ```
 
 ```
-#> # A tsibble: 22,855 x 6 [1HOUR]
-#> # Keys:      dep_delay_break [3]
+*#> # A tsibble: 22,855 x 6 [1HOUR]
+*#> # Keys:      dep_delay_break [3]
 #>   dep_delay_break sched_dep_datetime  n_flight  hour date       wday 
 #>   <chr>           <dttm>                 <int> <int> <date>     <ord>
 #> 1 15-60 mins      2017-01-01 00:00:00        3     0 2017-01-01 Sun  
@@ -747,6 +779,10 @@ background-size: cover
 class: inverse center bottom
 
 # Pipeline II: calendar-based visualisation <img src="img/sugrrants.svg" height=120px size=50%>
+
+???
+
+It is quite often to have sub-daily data, but there's no graphic tool for 
 
 ---
 
@@ -804,6 +840,13 @@ delay_qtl <- flights %>%
 ```
 ---
 
+class: center
+
+```{r plotly-cal}
+```
+
+---
+
 ## Pipeline II: calendarise the data
 
 .center[<img src="img/month.png" width = 380>]
@@ -843,10 +886,10 @@ class: inverse middle center
 
 ## Tidy temporal data
 
-* Rectangular structure: heterogeneous data type, multiple measured and grouping variables, implict missing values, and etc.
+* Rectangular form: heterogeneous data types, multiple measured and grouping variables, implict missing values, and etc.
 * An explicitly declared index variable and a set of keys
 * A mapping bridging the semantics of a dataset to its physical representation
-* A data pipeline that supports thinking of operations on the data variables
+* A data pipeline that supports thinking of operations on the data variables and observations
 
 .center[<img src="img/semantics.png" height=280>]
 
@@ -870,22 +913,10 @@ class: inverse middle center
 ## Visualisation of time series with nested and crossed factors
 
 ### student enrolment data: e.g. dept | faculty, campus
-### previous modelling work
+### previous modeling work
 
 ???
 
-## .blue[Visualisation of time series with nested and crossed factors]
-
-<br>
-<br>
-.middle[
-.pull-left[
-<img src="img/nesting.png" width = 280>
-]
-.pull-right[
-<img src="img/crossing.png" width = 280>
-]
-]
 
 ---
 
@@ -967,7 +998,7 @@ tsibble v0.1.0 CRAN release
 .arrow-right[
 .timeline-content[
 **Calendar-based graphics for visualizing people’s daily schedules**
-won the 2018 ASA Statistical Graphics Student Paper Award
+won the 2018 ASA Statistical Graphics Student Paper Award `r emo::ji("trophy")`
 .timeline-date[
 2018/01
 ]]]]
@@ -1003,7 +1034,7 @@ Academic visit @ Paris & Brussels
 .arrow-right[
 .timeline-content[
 **Tidy data structures to support exploration and modeling of temporal-context data**
-submitted JCGS
+submitted to JCGS
 .timeline-date[
 2018/07
 ]]]]
