@@ -834,6 +834,11 @@ delay_qtl <- flights %>%
 ```
 -->
 
+???
+
+* hour is mapped to x
+* quantiles mapped to y
+
 ---
 
 ```{r delay-qtl-cal, fig.height = 8, fig.width = 10}
