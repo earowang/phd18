@@ -335,7 +335,7 @@ flights %>%
 An explicitly declared variable (e.g. `sched_dep_datetime`) which could contain:
 * date-time: 
 ```{r}
-seq(ymd_hm("2018-03-14 16:00"), by = "15 mins", length.out = 2)
+seq(ymd_hm("2018-03-14 16:00", tz = "Australia/Melbourne"), by = "15 mins", length.out = 2)
 ```
 * date:
 ```{r}
@@ -580,7 +580,7 @@ A consistent set of verbs to solve a wide range of temporal data transformation 
 
 These all naturally work with `group_by()`.
 
-* join two tables: `left_join()`, `right_join()`, `full_join()`, `semi_join()`, `anti_join()`
+* join two tables: `left_join()`, `right_join()`, `inner_join()`, `full_join()`, `semi_join()`, `anti_join()`
 * rolling window: `slide()`, `tile()`, `stretch()`
 ]
 

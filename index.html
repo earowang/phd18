@@ -333,7 +333,7 @@ An explicitly declared variable (e.g. `sched_dep_datetime`) which could contain:
 * date-time: 
 
 ```
-#&gt; [1] "2018-03-14 16:00:00 UTC" "2018-03-14 16:15:00 UTC"
+#&gt; [1] "2018-03-14 16:00:00 AEDT" "2018-03-14 16:15:00 AEDT"
 ```
 * date:
 
@@ -601,7 +601,7 @@ A consistent set of verbs to solve a wide range of temporal data transformation 
 
 These all naturally work with `group_by()`.
 
-* join two tables: `left_join()`, `right_join()`, `full_join()`, `semi_join()`, `anti_join()`
+* join two tables: `left_join()`, `right_join()`, `inner_join()`, `full_join()`, `semi_join()`, `anti_join()`
 * rolling window: `slide()`, `tile()`, `stretch()`
 ]
 
